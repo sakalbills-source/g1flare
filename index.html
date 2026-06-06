@@ -4,30 +4,55 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G1 Flare — Cross-chain sFLR Onramp</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/eth.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #080808; color: #ffffff; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; }
-  .badge { background: rgba(255, 92, 141, 0.1); border: 1px solid rgba(255, 92, 141, 0.2); color: #ff5c8d; font-size: 0.7rem; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; padding: 7px 18px; border-radius: 100px; margin-bottom: 32px; }
+  body { background: #000; color: #fff; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; }
+  .badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 0.68rem; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; padding: 7px 18px; border-radius: 100px; margin-bottom: 36px; }
   .logo { font-size: 3.2rem; font-weight: 700; letter-spacing: -2px; margin-bottom: 16px; }
   .logo span { color: #ff5c8d; }
-  .tagline { font-size: 1rem; color: #666; margin-bottom: 64px; text-align: center; line-height: 1.9; font-weight: 300; max-width: 400px; }
-  .steps { display: flex; gap: 16px; margin-bottom: 52px; flex-wrap: wrap; justify-content: center; }
-  .step { background: #111; border: 1px solid #1e1e1e; border-radius: 20px; padding: 32px 24px; text-align: center; width: 160px; transition: all 0.3s; }
-  .step:hover { border-color: rgba(255, 92, 141, 0.3); background: #141414; }
-  .step-num { width: 42px; height: 42px; border-radius: 50%; background: #ff5c8d; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.95rem; margin: 0 auto 18px; color: white; }
-  .step-title { font-weight: 600; margin-bottom: 10px; color: #fff; font-size: 0.88rem; }
-  .step-desc { font-size: 0.76rem; color: #444; line-height: 1.7; font-weight: 300; }
-  .cta { background: #ff5c8d; color: white; border: none; padding: 17px 48px; border-radius: 14px; font-size: 0.95rem; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-  .cta:hover { background: #ff3d7a; transform: translateY(-1px); }
+  .tagline { font-size: 0.95rem; color: #888; margin-bottom: 48px; text-align: center; line-height: 1.9; font-weight: 300; max-width: 380px; }
+  .tokens { display: flex; gap: 20px; align-items: center; margin-bottom: 56px; }
+  .token { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .token img { width: 36px; height: 36px; border-radius: 50%; }
+  .token span { font-size: 0.68rem; color: #555; font-weight: 500; letter-spacing: 1px; }
+  .arrow { color: #ff5c8d; font-size: 1.2rem; margin-bottom: 16px; }
+  .steps { display: flex; gap: 1px; margin-bottom: 52px; flex-wrap: wrap; justify-content: center; background: #111; border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; }
+  .step { background: #000; padding: 32px 28px; text-align: center; width: 180px; border-right: 1px solid #111; }
+  .step:last-child { border-right: none; }
+  .step-num { width: 36px; height: 36px; border-radius: 50%; background: #ff5c8d; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; margin: 0 auto 16px; color: white; }
+  .step-title { font-weight: 600; margin-bottom: 8px; color: #fff; font-size: 0.88rem; }
+  .step-desc { font-size: 0.76rem; color: #666; line-height: 1.7; font-weight: 300; }
+  .cta { background: #fff; color: #000; border: none; padding: 17px 48px; border-radius: 14px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+  .cta:hover { background: #f0f0f0; transform: translateY(-1px); }
   .note { margin-top: 18px; font-size: 0.72rem; color: #333; text-align: center; letter-spacing: 0.5px; }
   .powered { margin-top: 64px; font-size: 0.68rem; color: #222; letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
-  <div class="badge">Built on Flare Network</div>
+  <div class="badge">Cross-chain sFLR Onramp</div>
   <div class="logo">G1<span>FLARE</span></div>
-  <p class="tagline">Convert SOL, ETH, or USDT to sFLR in three steps.<br>Put your capital to work on Flare.</p>
+  <p class="tagline">Put your SOL, ETH, or USDT to work on Flare in three clicks.</p>
+  <div class="tokens">
+    <div class="token">
+      <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/sol.png" alt="SOL">
+      <span>SOL</span>
+    </div>
+    <div class="token">
+      <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/eth.png" alt="ETH">
+      <span>ETH</span>
+    </div>
+    <div class="token">
+      <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/usdt.png" alt="USDT">
+      <span>USDT</span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="token">
+      <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1.0.0/32/color/flr.png" alt="sFLR">
+      <span>sFLR</span>
+    </div>
+  </div>
   <div class="steps">
     <div class="step">
       <div class="step-num">1</div>
