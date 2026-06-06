@@ -3,126 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>G1Flare</title>
+<title>G1Flare — Cross-chain sFLR Onramp</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #000; color: #fff; font-family: 'Nunito', sans-serif; height: 100vh; display: grid; grid-template-columns: 215px 1fr; overflow: hidden; }
-.sidebar { background: #080808; border-right: 1px solid #151515; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
-.top-logos { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; }
-.logo-badge { display: flex; align-items: center; gap: 6px; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 6px 8px; flex: 1; }
-.logo-img { width: 20px; height: 20px; border-radius: 50%; object-fit: contain; background: #fff; }
-.logo-badge-name { font-size: 0.62rem; font-weight: 700; color: #fff; line-height: 1; }
-.logo-badge-sub { font-size: 0.5rem; color: #888; }
-.sidebar-label { font-size: 0.56rem; color: #666; letter-spacing: 2px; text-transform: uppercase; margin: 8px 0 6px 10px; }
-.token-link { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; text-decoration: none; color: #fff; }
-.token-link:hover { background: #111; border-color: #1e1e1e; }
-.token-link.active { background: #111; border-color: rgba(255,60,120,0.3); }
-.token-link.disabled { opacity: 0.45; cursor: default; pointer-events: none; }
-.token-img { width: 30px; height: 30px; border-radius: 50%; object-fit: contain; background: #fff; flex-shrink: 0; padding: 2px; }
-.token-name { font-size: 0.82rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px; }
-.token-ticker { font-size: 0.65rem; color: #bbb; font-weight: 400; }
-.token-arrow { color: #555; font-size: 0.9rem; margin-left: auto; transition: color 0.2s; }
-.token-link:hover .token-arrow, .token-link.active .token-arrow { color: #FF3C78; }
-.soon-badge { margin-left: auto; font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #FF3C78; background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 6px; border-radius: 6px; }
-.divider { height: 1px; background: #151515; margin: 6px 0; }
-.output-token { padding: 12px; background: rgba(255,60,120,0.05); border: 1px solid rgba(255,60,120,0.12); border-radius: 12px; margin-top: 4px; }
-.output-label { font-size: 0.56rem; color: #FF3C78; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
-.output-row { display: flex; align-items: center; gap: 10px; }
-.output-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
-.output-desc { font-size: 0.62rem; color: #bbb; margin-top: 2px; }
-.fl-callout { margin-top: 8px; padding: 12px; background: rgba(255,107,0,0.05); border: 1px solid rgba(255,107,0,0.15); border-radius: 12px; }
-.fl-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.fl-logo { width: 22px; height: 22px; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px; }
-.fl-name { font-size: 0.78rem; font-weight: 700; color: #fff; }
-.fl-tag { font-size: 0.48rem; color: #FF8C00; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-left: auto; }
-.fl-desc { font-size: 0.68rem; color: #ccc; line-height: 1.6; }
-.fl-desc em { color: #FF8C00; font-style: normal; font-weight: 700; }
-.main { padding: 32px 48px; display: flex; flex-direction: column; justify-content: center; }
-.logo { font-size: 2.8rem; font-weight: 800; color: #FF3C78; letter-spacing: -1px; line-height: 1; margin-bottom: 10px; }
-.tagline { font-size: 0.92rem; color: #fff; line-height: 1.8; max-width: 440px; margin-bottom: 32px; }
-.steps { display: flex; flex-direction: column; margin-bottom: 32px; max-width: 480px; }
-.step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #111; }
+:root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #000000; --sidebar-bg: #090909; --card: #111111; --border: #1E1E1E; }
+body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; min-height: 100vh; }
+.layout { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
+.sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 6px; }
+.top-logos { display: flex; gap: 8px; margin-bottom: 20px; }
+.logo-badge { flex: 1; display: flex; align-items: center; gap: 7px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+.badge-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: #222; flex-shrink: 0; }
+.badge-name { font-size: 0.68rem; font-weight: 700; color: #fff; line-height: 1.2; }
+.badge-sub { font-size: 0.52rem; color: #aaa; }
+.section-label { font-size: 0.58rem; color: #555; letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; }
+.token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: #fff; transition: all 0.2s; cursor: pointer; }
+.token-row:hover { background: var(--card); border-color: var(--border); }
+.token-row.active { background: var(--card); border-color: rgba(255,60,120,0.35); }
+.token-row.disabled { opacity: 0.4; pointer-events: none; }
+.token-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #222; flex-shrink: 0; }
+.token-info { flex: 1; }
+.token-name { font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px; }
+.token-sub { font-size: 0.66rem; color: #aaa; }
+.token-arrow { color: #444; font-size: 1rem; transition: color 0.2s; }
+.token-row:hover .token-arrow, .token-row.active .token-arrow { color: var(--pink); }
+.soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.1); border: 1px solid rgba(255,60,120,0.2); padding: 3px 8px; border-radius: 8px; }
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+.receive-box { background: rgba(255,60,120,0.06); border: 1px solid rgba(255,60,120,0.15); border-radius: 14px; padding: 14px; margin-top: 4px; }
+.receive-label { font-size: 0.58rem; color: var(--pink); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+.receive-row { display: flex; align-items: center; gap: 10px; }
+.receive-name { font-size: 0.9rem; font-weight: 700; color: #fff; }
+.receive-sub { font-size: 0.64rem; color: #bbb; margin-top: 2px; }
+.firelight-box { background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.18); border-radius: 14px; padding: 14px; margin-top: 6px; }
+.fl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: cover; background: #222; flex-shrink: 0; }
+.fl-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.fl-badge { margin-left: auto; font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); }
+.fl-text { font-size: 0.72rem; color: #ddd; line-height: 1.65; }
+.fl-text strong { color: var(--orange); font-weight: 700; }
+.main { padding: 48px 56px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
+.g1-logo { font-size: 3.6rem; font-weight: 800; color: var(--pink); letter-spacing: -1px; line-height: 1; margin-bottom: 14px; }
+.tagline { font-size: 1rem; color: #fff; line-height: 1.8; max-width: 460px; margin-bottom: 40px; }
+.steps { max-width: 500px; margin-bottom: 40px; }
+.step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid #111; }
 .step:last-child { border-bottom: none; }
-.step-number { width: 26px; height: 26px; border-radius: 50%; background: #FF3C78; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; flex-shrink: 0; margin-top: 2px; color: #fff; }
-.step-title { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
-.step-desc { font-size: 0.78rem; color: #ccc; line-height: 1.6; }
-.cta { display: inline-flex; align-items: center; gap: 10px; background: #FF3C78; color: #fff; border: none; padding: 15px 36px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; width: fit-content; }
-.cta:hover { background: #FF1A60; transform: translateY(-1px); }
-.cta-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.6); animation: blink 2s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-.meta { margin-top: 10px; font-size: 0.68rem; color: #555; }
+.step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; color: #fff; }
+.step-title { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.step-desc { font-size: 0.82rem; color: #ccc; line-height: 1.6; }
+.cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--pink); color: #fff; border: none; padding: 16px 40px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.cta-btn:hover { background: var(--pink-dark); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,60,120,0.3); }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.7); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+.meta { margin-top: 14px; font-size: 0.72rem; color: #444; }
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+  .main { padding: 28px 20px; min-height: auto; justify-content: flex-start; }
+  .g1-logo { font-size: 2.6rem; }
+  .tagline { font-size: 0.9rem; margin-bottom: 24px; }
+  .cta-btn { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
-<div class="sidebar">
-  <div class="top-logos">
-    <div class="logo-badge">
-      <img class="logo-img" src="https://flare.network/en/static/Flare-logo.png" alt="FLR">
-      <div><div class="logo-badge-name">Flare</div><div class="logo-badge-sub">Network</div></div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="top-logos">
+      <div class="logo-badge">
+        <img class="badge-img" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="Flare" onerror="this.style.background='#FF3C78'">
+        <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
+      </div>
+      <div class="logo-badge">
+        <img class="badge-img" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
+      </div>
     </div>
-    <div class="logo-badge">
-      <img class="logo-img" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight">
-      <div><div class="logo-badge-name">Firelight</div><div class="logo-badge-sub">Protocol</div></div>
+    <div class="section-label">Convert from</div>
+    <a class="token-row active" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" onerror="this.style.background='#9945FF'">
+      <div class="token-info"><div class="token-name">Solana</div><div class="token-sub">SOL</div></div>
+      <span class="token-arrow">›</span>
+    </a>
+    <a class="token-row" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" onerror="this.style.background='#627EEA'">
+      <div class="token-info"><div class="token-name">Ethereum</div><div class="token-sub">ETH</div></div>
+      <span class="token-arrow">›</span>
+    </a>
+    <a class="token-row" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT" onerror="this.style.background='#26A17B'">
+      <div class="token-info"><div class="token-name">Tether</div><div class="token-sub">USDT</div></div>
+      <span class="token-arrow">›</span>
+    </a>
+    <a class="token-row disabled" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD" onerror="this.style.background='#1A56DB'">
+      <div class="token-info"><div class="token-name">RLUSD</div><div class="token-sub">Ripple USD</div></div>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <div class="divider"></div>
+    <div class="receive-box">
+      <div class="receive-label">You receive</div>
+      <div class="receive-row">
+        <img class="token-icon" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="sFLR" onerror="this.style.background='#FF3C78'">
+        <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Liquid staking on Flare</div></div>
+      </div>
     </div>
-  </div>
-  <div class="sidebar-label">Convert from</div>
-  <a class="token-link active" href="#">
-    <img class="token-img" src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL">
-    <div><div class="token-name">Solana</div><div class="token-ticker">SOL</div></div>
-    <span class="token-arrow">›</span>
-  </a>
-  <a class="token-link" href="#">
-    <img class="token-img" src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH">
-    <div><div class="token-name">Ethereum</div><div class="token-ticker">ETH</div></div>
-    <span class="token-arrow">›</span>
-  </a>
-  <a class="token-link" href="#">
-    <img class="token-img" src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT">
-    <div><div class="token-name">Tether</div><div class="token-ticker">USDT</div></div>
-    <span class="token-arrow">›</span>
-  </a>
-  <a class="token-link disabled" href="#">
-    <img class="token-img" src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="RLUSD">
-    <div><div class="token-name">RLUSD</div><div class="token-ticker">Ripple USD</div></div>
-    <span class="soon-badge">Soon</span>
-  </a>
-  <div class="divider"></div>
-  <div class="output-token">
-    <div class="output-label">You receive</div>
-    <div class="output-row">
-      <img class="token-img" src="https://flare.network/en/static/Flare-logo.png" alt="sFLR">
-      <div><div class="output-name">Staked Flare</div><div class="output-desc">sFLR · Liquid staking on Flare</div></div>
-    </div>
-  </div>
-  <div class="fl-callout">
-    <div class="fl-header">
-      <img class="fl-logo" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight">
-      <div class="fl-name">Firelight</div>
-      <div class="fl-tag">Composable</div>
-    </div>
-    <div class="fl-desc">Deploy your sFLR as <em>cover collateral</em> and earn real yield. The jewel of the Flare ecosystem.</div>
-  </div>
-</div>
-<div class="main">
-  <div class="logo">G1FLARE</div>
-  <p class="tagline">The simplest onramp from SOL, ETH, or USDT to sFLR on Flare. Three steps. No complexity.</p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-number">1</div>
-      <div><div class="step-title">Connect your wallet</div><div class="step-desc">Phantom, MetaMask, or any EVM wallet. No account needed.</div></div>
-    </div>
-    <div class="step">
-      <div class="step-number">2</div>
-      <div><div class="step-title">Enter your amount</div><div class="step-desc">Select token and amount. See exactly how much sFLR you receive before confirming.</div></div>
-    </div>
-    <div class="step">
-      <div class="step-number">3</div>
-      <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands in your wallet. Stake on Kinetic, deposit into Firelight, or hold.</div></div>
+    <div class="firelight-box">
+      <div class="fl-top">
+        <img class="fl-icon" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <div class="fl-name">Firelight</div>
+        <div class="fl-badge">Composable</div>
+      </div>
+      <div class="fl-text">Deploy your sFLR as <strong>cover collateral</strong> and earn real yield. The jewel of the Flare ecosystem.</div>
     </div>
   </div>
-  <button class="cta"><span class="cta-dot"></span>Launch App — Coming Soon</button>
-  <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
+  <div class="main">
+    <div class="g1-logo">G1FLARE</div>
+    <p class="tagline">The simplest onramp from SOL, ETH, or USDT to sFLR on Flare Network. Three steps. No complexity.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Connect your wallet</div><div class="step-desc">Phantom, MetaMask, or any EVM wallet. No account needed.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div><div class="step-title">Enter your amount</div><div class="step-desc">Select your token and amount. See exactly how much sFLR you receive before confirming.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands directly in your wallet. Stake on Kinetic, deposit into Firelight, or hold.</div></div>
+      </div>
+    </div>
+    <button class="cta-btn"><span class="pulse"></span>Launch App — Coming Soon</button>
+    <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
+  </div>
 </div>
 </body>
 </html>
