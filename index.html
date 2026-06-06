@@ -9,8 +9,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
 body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; }
-
-/* DESKTOP */
 .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
 .sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; }
 .top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
@@ -20,7 +18,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .badge-sub { font-size: 0.52rem; color: var(--muted); }
 .section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
 .token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: var(--text); transition: all 0.2s; cursor: pointer; }
-.token-row:hover { background: var(--bg); border-color: var(--border); }
 .token-row.active { background: #FFF0F4; border-color: rgba(255,60,120,0.25); }
 .token-row.disabled { opacity: 0.35; pointer-events: none; }
 .token-icon { width: 34px; height: 34px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
@@ -28,7 +25,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .token-name { font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
 .token-sub { font-size: 0.66rem; color: var(--muted); }
 .token-arrow { color: #ccc; font-size: 1rem; transition: color 0.2s; }
-.token-row:hover .token-arrow, .token-row.active .token-arrow { color: var(--pink); }
+.token-row.active .token-arrow { color: var(--pink); }
 .soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 8px; border-radius: 8px; }
 .divider { height: 1px; background: var(--border); margin: 8px 0; }
 .receive-box { background: #FFF0F4; border: 1px solid rgba(255,60,120,0.2); border-radius: 14px; padding: 14px; margin-top: 4px; }
@@ -66,12 +63,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .spectra-cta { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 17px 32px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; }
 .spectra-cta:hover { background: #6C63FF; color: #fff; transform: translateY(-2px); }
 .meta { margin-top: 18px; font-size: 0.72rem; color: #bbb; }
-
-/* MOBILE BOTTOM NAV */
 .mobile-nav { display: none; }
-
 @media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+  .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .main { padding: 32px 20px 120px; min-height: auto; justify-content: flex-start; }
   .g1-logo { font-size: 2.8rem; }
@@ -79,37 +73,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   .cta-btn { width: 100%; justify-content: center; }
   .spectra-cta { width: 100%; justify-content: center; }
   .cta-wrap { flex-direction: column; align-items: stretch; }
-
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--white);
-    border-top: 1px solid var(--border);
-    padding: 12px 16px 24px;
-    gap: 6px;
-    z-index: 100;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .mobile-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    text-decoration: none;
-    color: var(--text);
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-
+  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 16px 24px; gap: 6px; z-index: 100; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 12px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; transition: all 0.2s; }
   .mobile-nav-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
+  .mobile-nav-item.disabled { opacity: 0.35; pointer-events: none; }
   .mobile-nav-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; background: #f0f0f0; }
   .mobile-nav-label { font-size: 0.6rem; font-weight: 700; color: var(--text); white-space: nowrap; }
   .mobile-nav-sub { font-size: 0.5rem; color: var(--muted); white-space: nowrap; }
@@ -133,19 +100,24 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     </div>
     <div class="section-label">Convert from</div>
     <a class="token-row active" href="#">
-      <img class="token-icon" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
-      <div class="token-info"><div class="token-name">Solana</div><div class="token-sub">SOL</div></div>
-      <span class="token-arrow">›</span>
-    </a>
-    <a class="token-row" href="#">
-      <img class="token-icon" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
-      <div class="token-info"><div class="token-name">Ethereum</div><div class="token-sub">ETH</div></div>
-      <span class="token-arrow">›</span>
-    </a>
-    <a class="token-row" href="#">
       <img class="token-icon" src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
       <div class="token-info"><div class="token-name">Tether</div><div class="token-sub">USDT</div></div>
       <span class="token-arrow">›</span>
+    </a>
+    <a class="token-row disabled" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="FLR">
+      <div class="token-info"><div class="token-name">Flare</div><div class="token-sub">FLR</div></div>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a class="token-row disabled" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
+      <div class="token-info"><div class="token-name">Solana</div><div class="token-sub">SOL</div></div>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a class="token-row disabled" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
+      <div class="token-info"><div class="token-name">Ethereum</div><div class="token-sub">ETH</div></div>
+      <span class="soon-pill">Soon</span>
     </a>
     <a class="token-row disabled" href="#">
       <img class="token-icon" src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD" onerror="this.style.background='#1A56DB'">
@@ -177,18 +149,17 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       <span class="spectra-arrow">›</span>
     </a>
   </div>
-
   <div class="main">
     <div class="g1-logo">G1FLARE</div>
-    <p class="tagline">The simplest onramp from SOL, ETH, or USDT to sFLR on Flare Network. Three steps. No complexity.</p>
+    <p class="tagline">The simplest onramp from USDT to sFLR on Flare Network. Three steps. No complexity.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div><div class="step-title">Connect your wallet</div><div class="step-desc">Phantom, MetaMask, or any EVM wallet. No account needed.</div></div>
+        <div><div class="step-title">Connect your wallet</div><div class="step-desc">MetaMask or any EVM wallet. No account needed.</div></div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div><div class="step-title">Enter your amount</div><div class="step-desc">Select your token and amount. See exactly how much sFLR you receive before confirming.</div></div>
+        <div><div class="step-title">Enter your USDT amount</div><div class="step-desc">See exactly how much sFLR you receive before confirming. Minimum $50 USDT.</div></div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -202,25 +173,28 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
 </div>
-
-<!-- MOBILE BOTTOM NAV -->
 <div class="mobile-nav">
   <a class="mobile-nav-item active" href="#">
-    <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
-    <div class="mobile-nav-label">Solana</div>
-    <div class="mobile-nav-sub">SOL</div>
-  </a>
-  <a class="mobile-nav-item" href="#">
-    <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
-    <div class="mobile-nav-label">Ethereum</div>
-    <div class="mobile-nav-sub">ETH</div>
-  </a>
-  <a class="mobile-nav-item" href="#">
     <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
-    <div class="mobile-nav-label">Tether</div>
-    <div class="mobile-nav-sub">USDT</div>
+    <div class="mobile-nav-label">USDT</div>
+    <div class="mobile-nav-sub">Active</div>
   </a>
-  <a class="mobile-nav-item" href="#">
+  <a class="mobile-nav-item disabled" href="#">
+    <img src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="FLR">
+    <div class="mobile-nav-label">FLR</div>
+    <div class="mobile-soon">Soon</div>
+  </a>
+  <a class="mobile-nav-item disabled" href="#">
+    <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
+    <div class="mobile-nav-label">SOL</div>
+    <div class="mobile-soon">Soon</div>
+  </a>
+  <a class="mobile-nav-item disabled" href="#">
+    <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
+    <div class="mobile-nav-label">ETH</div>
+    <div class="mobile-soon">Soon</div>
+  </a>
+  <a class="mobile-nav-item disabled" href="#">
     <img src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD" onerror="this.style.background='#1A56DB'">
     <div class="mobile-nav-label">RLUSD</div>
     <div class="mobile-soon">Soon</div>
@@ -231,6 +205,5 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="mobile-nav-sub">Stake</div>
   </a>
 </div>
-
 </body>
 </html>
