@@ -7,61 +7,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #000000; --sidebar-bg: #090909; --card: #111111; --border: #1E1E1E; }
-body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; min-height: 100vh; }
-.layout { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
-.sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 6px; }
-.top-logos { display: flex; gap: 8px; margin-bottom: 20px; }
-.logo-badge { flex: 1; display: flex; align-items: center; gap: 7px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
-.badge-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: #222; flex-shrink: 0; }
-.badge-name { font-size: 0.68rem; font-weight: 700; color: #fff; line-height: 1.2; }
-.badge-sub { font-size: 0.52rem; color: #aaa; }
-.section-label { font-size: 0.58rem; color: #555; letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; }
-.token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: #fff; transition: all 0.2s; cursor: pointer; }
-.token-row:hover { background: var(--card); border-color: var(--border); }
-.token-row.active { background: var(--card); border-color: rgba(255,60,120,0.35); }
-.token-row.disabled { opacity: 0.4; pointer-events: none; }
-.token-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #222; flex-shrink: 0; }
+:root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --card: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
+body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; }
+.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; }
+.top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
+.logo-badge { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; }
+.badge-name { font-size: 0.7rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+.badge-sub { font-size: 0.52rem; color: var(--muted); }
+.section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
+.token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: var(--text); transition: all 0.2s; cursor: pointer; }
+.token-row:hover { background: var(--bg); border-color: var(--border); }
+.token-row.active { background: #FFF0F4; border-color: rgba(255,60,120,0.25); }
+.token-row.disabled { opacity: 0.35; pointer-events: none; }
+.token-icon { width: 34px; height: 34px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
 .token-info { flex: 1; }
-.token-name { font-size: 0.88rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px; }
-.token-sub { font-size: 0.66rem; color: #aaa; }
-.token-arrow { color: #444; font-size: 1rem; transition: color 0.2s; }
+.token-name { font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
+.token-sub { font-size: 0.66rem; color: var(--muted); }
+.token-arrow { color: #ccc; font-size: 1rem; transition: color 0.2s; }
 .token-row:hover .token-arrow, .token-row.active .token-arrow { color: var(--pink); }
-.soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.1); border: 1px solid rgba(255,60,120,0.2); padding: 3px 8px; border-radius: 8px; }
-.divider { height: 1px; background: var(--border); margin: 4px 0; }
-.receive-box { background: rgba(255,60,120,0.06); border: 1px solid rgba(255,60,120,0.15); border-radius: 14px; padding: 14px; margin-top: 4px; }
+.soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 8px; border-radius: 8px; }
+.divider { height: 1px; background: var(--border); margin: 8px 0; }
+.receive-box { background: #FFF0F4; border: 1px solid rgba(255,60,120,0.2); border-radius: 14px; padding: 14px; margin-top: 4px; }
 .receive-label { font-size: 0.58rem; color: var(--pink); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
 .receive-row { display: flex; align-items: center; gap: 10px; }
-.receive-name { font-size: 0.9rem; font-weight: 700; color: #fff; }
-.receive-sub { font-size: 0.64rem; color: #bbb; margin-top: 2px; }
-.firelight-box { background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.18); border-radius: 14px; padding: 14px; margin-top: 6px; }
+.receive-name { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.receive-sub { font-size: 0.64rem; color: var(--muted); margin-top: 2px; }
+.firelight-box { background: #FFF8F0; border: 1px solid rgba(255,107,0,0.15); border-radius: 14px; padding: 14px; margin-top: 6px; }
 .fl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: cover; background: #222; flex-shrink: 0; }
-.fl-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
+.fl-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
 .fl-badge { margin-left: auto; font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); }
-.fl-text { font-size: 0.72rem; color: #ddd; line-height: 1.65; }
+.fl-text { font-size: 0.72rem; color: #555; line-height: 1.65; }
 .fl-text strong { color: var(--orange); font-weight: 700; }
-.main { padding: 48px 56px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
-.g1-logo { font-size: 3.6rem; font-weight: 800; color: var(--pink); letter-spacing: -1px; line-height: 1; margin-bottom: 14px; }
-.tagline { font-size: 1rem; color: #fff; line-height: 1.8; max-width: 460px; margin-bottom: 40px; }
-.steps { max-width: 500px; margin-bottom: 40px; }
-.step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid #111; }
+.spectra-link { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); text-decoration: none; color: var(--text); transition: all 0.2s; margin-top: 4px; background: var(--white); }
+.spectra-link:hover { border-color: rgba(255,60,120,0.25); background: #FFF0F4; }
+.spectra-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #6C63FF, #A78BFA); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: white; flex-shrink: 0; }
+.spectra-info { flex: 1; }
+.spectra-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+.spectra-sub { font-size: 0.62rem; color: var(--muted); }
+.spectra-arrow { color: #ccc; font-size: 0.9rem; }
+.main { padding: 60px 72px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
+.g1-logo { font-size: 4rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 16px; }
+.tagline { font-size: 1.1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 48px; font-weight: 400; }
+.steps { max-width: 520px; margin-bottom: 48px; }
+.step { display: flex; gap: 18px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--border); }
 .step:last-child { border-bottom: none; }
-.step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; color: #fff; }
-.step-title { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.step-desc { font-size: 0.82rem; color: #ccc; line-height: 1.6; }
-.cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--pink); color: #fff; border: none; padding: 16px 40px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-.cta-btn:hover { background: var(--pink-dark); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,60,120,0.3); }
-.pulse { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.7); animation: pulse 2s infinite; }
+.step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; color: #fff; }
+.step-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+.cta-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--pink); color: #fff; border: none; padding: 17px 44px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.cta-btn:hover { background: var(--pink-dark); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,60,120,0.25); }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.8); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
-.meta { margin-top: 14px; font-size: 0.72rem; color: #444; }
+.spectra-cta { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 17px 32px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+.spectra-cta:hover { background: #6C63FF; color: #fff; transform: translateY(-2px); }
+.meta { margin-top: 18px; font-size: 0.72rem; color: #bbb; }
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
-  .main { padding: 28px 20px; min-height: auto; justify-content: flex-start; }
-  .g1-logo { font-size: 2.6rem; }
-  .tagline { font-size: 0.9rem; margin-bottom: 24px; }
+  .main { padding: 32px 20px; min-height: auto; justify-content: flex-start; }
+  .g1-logo { font-size: 2.8rem; }
+  .tagline { font-size: 0.95rem; margin-bottom: 28px; }
   .cta-btn { width: 100%; justify-content: center; }
+  .spectra-cta { width: 100%; justify-content: center; }
+  .cta-wrap { flex-direction: column; align-items: stretch; }
 }
 </style>
 </head>
@@ -70,7 +82,7 @@ body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; mi
   <div class="sidebar">
     <div class="top-logos">
       <div class="logo-badge">
-        <img class="badge-img" src="https://static.wixstatic.com/media/c4e15a_6e96e9b5e09b4b9a9e2a3d5c2c3d1b2a~mv2.png" alt="Flare" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
+        <img class="badge-img" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="Flare" onerror="this.style.background='#FF3C78'">
         <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
       </div>
       <div class="logo-badge">
@@ -103,7 +115,7 @@ body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; mi
     <div class="receive-box">
       <div class="receive-label">You receive</div>
       <div class="receive-row">
-        <img class="token-icon" src="https://assets.coingecko.com/coins/images/30877/small/sflr.png" alt="sFLR" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
+        <img class="token-icon" src="https://static.wixstatic.com/media/c4e15a_8e0abe4e5e3040e3b88f5dc8e85c9c30~mv2.png" alt="sFLR" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
         <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
       </div>
     </div>
@@ -115,6 +127,14 @@ body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; mi
       </div>
       <div class="fl-text">Deploy your sFLR as <strong>cover collateral</strong> and earn real yield. The jewel of the Flare ecosystem.</div>
     </div>
+    <a class="spectra-link" href="https://app.spectra.finance" target="_blank">
+      <div class="spectra-icon">SP</div>
+      <div class="spectra-info">
+        <div class="spectra-name">Stake on Spectra</div>
+        <div class="spectra-sub">LP pools · PT fixed yield</div>
+      </div>
+      <span class="spectra-arrow">›</span>
+    </a>
   </div>
   <div class="main">
     <div class="g1-logo">G1FLARE</div>
@@ -133,7 +153,10 @@ body { background: var(--bg); color: #fff; font-family: 'Nunito', sans-serif; mi
         <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands directly in your wallet. Stake on Kinetic, deposit into Firelight, or hold.</div></div>
       </div>
     </div>
-    <button class="cta-btn"><span class="pulse"></span>Launch App — Coming Soon</button>
+    <div class="cta-wrap">
+      <button class="cta-btn"><span class="pulse"></span>Launch App — Coming Soon</button>
+      <a class="spectra-cta" href="https://app.spectra.finance" target="_blank">Stake on Spectra →</a>
+    </div>
     <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
 </div>
