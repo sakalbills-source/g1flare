@@ -13,7 +13,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; }
 .top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
 .logo-badge { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
-.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; }
+.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
 .badge-name { font-size: 0.7rem; font-weight: 700; color: var(--text); line-height: 1.2; }
 .badge-sub { font-size: 0.52rem; color: var(--muted); }
 .section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
@@ -36,21 +36,20 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .receive-sub { font-size: 0.64rem; color: var(--muted); margin-top: 2px; }
 .firelight-box { background: #FFF8F0; border: 1px solid rgba(255,107,0,0.15); border-radius: 14px; padding: 14px; margin-top: 6px; }
 .fl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
+.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
 .fl-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
 .fl-badge { margin-left: auto; font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); }
 .fl-text { font-size: 0.72rem; color: #555; line-height: 1.65; }
 .fl-text strong { color: var(--orange); font-weight: 700; }
 .spectra-link { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); text-decoration: none; color: var(--text); transition: all 0.2s; margin-top: 4px; background: var(--white); }
-.spectra-link:hover { border-color: rgba(255,60,120,0.25); background: #FFF0F4; }
+.spectra-link:hover { border-color: rgba(108,99,255,0.3); background: #F5F4FF; }
 .spectra-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #6C63FF, #A78BFA); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: white; flex-shrink: 0; }
-.spectra-info { flex: 1; }
 .spectra-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
 .spectra-sub { font-size: 0.62rem; color: var(--muted); }
-.spectra-arrow { color: #ccc; font-size: 0.9rem; }
+.spectra-arrow { color: #ccc; font-size: 0.9rem; margin-left: auto; }
 .main { padding: 60px 72px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
 .g1-logo { font-size: 4rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 16px; }
-.tagline { font-size: 1.1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 48px; font-weight: 400; }
+.tagline { font-size: 1.1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 48px; font-weight: 700; }
 .steps { max-width: 520px; margin-bottom: 48px; }
 .step { display: flex; gap: 18px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--border); }
 .step:last-child { border-bottom: none; }
@@ -86,7 +85,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
         <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
       </div>
       <div class="logo-badge">
-        <img class="badge-img" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <img class="badge-img" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight" onerror="this.style.background='#FF6B00'">
         <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
       </div>
     </div>
@@ -115,13 +114,13 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="receive-box">
       <div class="receive-label">You receive</div>
       <div class="receive-row">
-        <img class="token-icon" src="https://static.wixstatic.com/media/c4e15a_8e0abe4e5e3040e3b88f5dc8e85c9c30~mv2.png" alt="sFLR" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
+        <img class="token-icon" src="https://assets.coingecko.com/coins/images/30877/small/sflr.png" alt="sFLR" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
         <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
       </div>
     </div>
     <div class="firelight-box">
       <div class="fl-top">
-        <img class="fl-icon" src="https://framerusercontent.com/assets/Laug7hJH4Ud663hJHTcH6cG18kU.png" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <img class="fl-icon" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight" onerror="this.style.background='#FF6B00'">
         <div class="fl-name">Firelight</div>
         <div class="fl-badge">Composable</div>
       </div>
@@ -129,7 +128,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     </div>
     <a class="spectra-link" href="https://app.spectra.finance" target="_blank">
       <div class="spectra-icon">SP</div>
-      <div class="spectra-info">
+      <div>
         <div class="spectra-name">Stake on Spectra</div>
         <div class="spectra-sub">LP pools · PT fixed yield</div>
       </div>
