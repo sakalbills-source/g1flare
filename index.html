@@ -10,7 +10,7 @@
 :root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
 body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; }
 .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
-.sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; }
+.sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
 .top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
 .logo-badge { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
 .badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
@@ -18,13 +18,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .badge-sub { font-size: 0.52rem; color: var(--muted); }
 .section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
 .token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: var(--text); transition: all 0.2s; cursor: pointer; }
+.token-row:hover { background: var(--bg); border-color: var(--border); }
 .token-row.active { background: #FFF0F4; border-color: rgba(255,60,120,0.25); }
 .token-row.disabled { opacity: 0.35; pointer-events: none; }
 .token-icon { width: 34px; height: 34px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
 .token-info { flex: 1; }
 .token-name { font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
 .token-sub { font-size: 0.66rem; color: var(--muted); }
-.token-arrow { color: #ccc; font-size: 1rem; }
+.token-arrow { color: #ccc; font-size: 1rem; transition: color 0.2s; }
 .token-row.active .token-arrow { color: var(--pink); }
 .soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 8px; border-radius: 8px; }
 .divider { height: 1px; background: var(--border); margin: 8px 0; }
@@ -46,60 +47,114 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .spectra-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
 .spectra-sub { font-size: 0.62rem; color: var(--muted); }
 .spectra-arrow { color: #ccc; font-size: 0.9rem; margin-left: auto; }
-.main { padding: 60px 72px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
-.g1-logo { font-size: 4rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 16px; }
-.tagline { font-size: 1.1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 48px; font-weight: 700; }
-.steps { max-width: 520px; margin-bottom: 48px; }
-.step { display: flex; gap: 18px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--border); }
-.step:last-child { border-bottom: none; }
-.step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; color: #fff; }
-.step-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-.cta-wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--pink); color: #fff; border: none; padding: 17px 44px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-.cta-btn:hover { background: var(--pink-dark); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,60,120,0.25); }
-.pulse { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.8); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+.main { padding: 40px 48px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
+.g1-logo { font-size: 3.2rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 12px; }
+.tagline { font-size: 1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 32px; font-weight: 700; }
+
+/* SWAP WIDGET */
+.swap-wrap { max-width: 460px; }
+.swap-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.swap-title { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+.live-dot { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--muted); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 2s infinite; }
+.dot.error { background: #ef4444; animation: none; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.rate-bar { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 7px 12px; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.75rem; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.rate-bar strong { color: var(--text); }
+.refresh-t { margin-left: auto; font-size: 0.6rem; }
+.bal-bar { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 0.75rem; }
+.bal-bar.show { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.bal-item { display: flex; flex-direction: column; gap: 1px; }
+.bal-label { font-size: 0.52rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.bal-amt { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+.bal-usd { font-size: 0.58rem; color: var(--muted); }
+.bal-div { width: 1px; height: 24px; background: var(--border); }
+.bal-addr { margin-left: auto; font-size: 0.6rem; color: var(--muted); font-family: monospace; }
+.scard { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin-bottom: 6px; }
+.scard-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.scard-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.max-b { font-size: 0.58rem; font-weight: 700; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.2); border-radius: 6px; padding: 2px 7px; cursor: pointer; display: none; }
+.tok-input { display: flex; align-items: center; gap: 8px; }
+.tok-badge { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px 4px 6px; white-space: nowrap; }
+.tok-circle { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.4rem; font-weight: 800; color: white; }
+.u-c { background: #26A17B; } .s-c { background: #FF3C78; } .f-c { background: #E8473F; }
+.tok-lbl { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+.amt-input { flex: 1; font-size: 1.2rem; font-weight: 700; color: var(--text); background: transparent; border: none; outline: none; text-align: right; font-family: inherit; min-width: 0; }
+.chain-sel { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+.chain-b { font-size: 0.58rem; font-weight: 700; padding: 3px 8px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.chain-b.active { background: #1a1a2e; color: #fff; border-color: #6C63FF; }
+.arrow-r { text-align: center; color: var(--pink); font-size: 0.78rem; margin: 2px 0; }
+.out-sel { display: flex; gap: 6px; margin-bottom: 10px; }
+.out-b { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 8px; border-radius: 10px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.out-b.active { border-color: var(--pink); background: #FFF0F4; }
+.out-b-lbl { font-size: 0.75rem; font-weight: 700; color: var(--text); }
+.out-b-sub { font-size: 0.56rem; color: var(--muted); }
+.out-b.active .out-b-lbl { color: var(--pink); }
+.rec-pill { font-size: 0.48rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 2px 5px; border-radius: 5px; }
+.out-row { display: flex; align-items: center; justify-content: space-between; }
+.out-amt { font-size: 1.2rem; font-weight: 700; color: var(--pink); }
+.fee-bd { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: none; }
+.fee-bd.show { display: block; }
+.fee-r { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--muted); padding: 2px 0; }
+.fee-r.total { font-weight: 700; color: var(--text); border-top: 1px solid var(--border); margin-top: 3px; padding-top: 5px; }
+.fee-r.warn { color: #f59e0b; } .fee-r.good { color: #22c55e; }
+.after-sw { display: none; font-size: 0.65rem; color: var(--muted); margin-top: 5px; }
+.after-sw.show { display: block; }
+.after-sw strong { color: #22c55e; }
+.slip-row { display: flex; align-items: center; gap: 5px; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.slip-lbl { font-size: 0.65rem; color: var(--muted); margin-right: 2px; }
+.slip-b { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.slip-b.active { background: var(--pink); color: white; border-color: var(--pink); }
+.conf-wrap { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 6px; }
+.conf-wrap.show { display: block; }
+.conf-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; }
+.conf-cd { font-weight: 700; color: var(--pink); }
+.conf-cd.urgent { color: #ef4444; }
+.swap-btn { width: 100%; padding: 14px; border-radius: 100px; border: none; background: var(--pink); color: white; font-size: 0.92rem; font-weight: 800; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.swap-btn:hover { background: var(--pink-dark); transform: translateY(-1px); }
+.swap-btn.connected { background: #111; }
+.lz-badge { display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 6px; font-size: 0.6rem; color: var(--muted); }
+.lz-dot { width: 5px; height: 5px; border-radius: 50%; background: #6C63FF; }
+.err-msg { font-size: 0.68rem; color: #ef4444; text-align: center; margin-top: 5px; display: none; }
+.err-msg.show { display: block; }
 
 /* STAKE DROPDOWN */
-.stake-wrap { position: relative; display: inline-block; }
-.stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 17px 32px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.cta-wrap { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.stake-wrap { position: relative; }
+.stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 14px 28px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .stake-btn:hover { background: #6C63FF; color: #fff; }
-.stake-chevron { font-size: 0.7rem; transition: transform 0.2s; }
-.stake-wrap:hover .stake-chevron { transform: rotate(180deg); }
-.stake-dropdown { position: absolute; bottom: calc(100% + 10px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 8px; min-width: 200px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: all 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 .stake-wrap:hover .stake-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
-.stake-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; text-decoration: none; color: var(--text); transition: all 0.15s; }
-.stake-option:hover { background: var(--bg); }
-.stake-option-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.52rem; font-weight: 800; color: white; flex-shrink: 0; }
-.spectra-color { background: linear-gradient(135deg, #6C63FF, #A78BFA); }
-.spark-color { background: linear-gradient(135deg, #FF6B00, #FFB347); }
-.stake-option-name { font-size: 0.85rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
-.stake-option-sub { font-size: 0.62rem; color: var(--muted); }
+.stake-opt { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; text-decoration: none; color: var(--text); transition: all 0.15s; }
+.stake-opt:hover { background: var(--bg); }
+.stake-opt-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.48rem; font-weight: 800; color: white; flex-shrink: 0; }
+.sp-c { background: linear-gradient(135deg, #6C63FF, #A78BFA); }
+.sd-c { background: linear-gradient(135deg, #FF6B00, #FFB347); }
+.fl-c { background: linear-gradient(135deg, #FF3C78, #FF8FB5); }
+.stake-opt-name { font-size: 0.8rem; font-weight: 700; }
+.stake-opt-sub { font-size: 0.58rem; color: var(--muted); }
+.meta { margin-top: 12px; font-size: 0.68rem; color: #bbb; }
 
-.meta { margin-top: 18px; font-size: 0.72rem; color: #bbb; }
+/* MOBILE */
 .mobile-nav { display: none; }
-
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .main { padding: 32px 20px 120px; min-height: auto; justify-content: flex-start; }
-  .g1-logo { font-size: 2.8rem; }
-  .tagline { font-size: 0.95rem; margin-bottom: 28px; }
-  .cta-btn { width: 100%; justify-content: center; }
-  .stake-wrap { width: 100%; }
-  .stake-btn { width: 100%; justify-content: center; }
-  .stake-dropdown { bottom: auto; top: calc(100% + 10px); }
+  .main { padding: 24px 16px 120px; min-height: auto; justify-content: flex-start; }
+  .g1-logo { font-size: 2.4rem; }
+  .tagline { font-size: 0.88rem; margin-bottom: 24px; }
+  .swap-wrap { max-width: 100%; }
+  .swap-btn { font-size: 0.88rem; }
   .cta-wrap { flex-direction: column; align-items: stretch; }
-  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 16px 24px; gap: 6px; z-index: 100; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 12px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; transition: all 0.2s; }
-  .mobile-nav-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
-  .mobile-nav-item.disabled { opacity: 0.35; pointer-events: none; }
-  .mobile-nav-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; background: #f0f0f0; }
-  .mobile-nav-label { font-size: 0.6rem; font-weight: 700; color: var(--text); white-space: nowrap; }
-  .mobile-nav-sub { font-size: 0.5rem; color: var(--muted); white-space: nowrap; }
-  .mobile-soon { font-size: 0.45rem; font-weight: 800; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 2px 5px; border-radius: 5px; letter-spacing: 1px; text-transform: uppercase; }
-  .mobile-spectra { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #6C63FF, #A78BFA); display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800; color: white; }
+  .stake-btn { width: 100%; justify-content: center; }
+  .stake-dropdown { bottom: auto; top: calc(100% + 8px); }
+  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px 20px; gap: 4px; z-index: 100; overflow-x: auto; }
+  .mn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; }
+  .mn-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
+  .mn-item.disabled { opacity: 0.35; pointer-events: none; }
+  .mn-item img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #f0f0f0; }
+  .mn-lbl { font-size: 0.58rem; font-weight: 700; white-space: nowrap; }
+  .mn-soon { font-size: 0.44rem; font-weight: 700; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 1px 4px; border-radius: 4px; text-transform: uppercase; }
 }
 </style>
 </head>
@@ -160,48 +215,114 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     </div>
     <a class="spectra-link" href="https://app.spectra.finance" target="_blank">
       <div class="spectra-icon">SP</div>
-      <div>
-        <div class="spectra-name">Stake on Spectra</div>
-        <div class="spectra-sub">LP pools · PT fixed yield</div>
-      </div>
+      <div><div class="spectra-name">Stake on Spectra</div><div class="spectra-sub">LP pools · PT fixed yield</div></div>
       <span class="spectra-arrow">›</span>
     </a>
   </div>
+
   <div class="main">
     <div class="g1-logo">G1FLARE</div>
     <p class="tagline">The simplest onramp from USDT to sFLR on Flare Network. Three steps. No complexity.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div><div class="step-title">Connect your wallet</div><div class="step-desc">MetaMask or any EVM wallet. No account needed.</div></div>
+
+    <!-- SWAP WIDGET -->
+    <div class="swap-wrap">
+      <div class="swap-header">
+        <div class="swap-title">Swap</div>
+        <div class="live-dot"><div class="dot" id="liveDot"></div><span id="liveLabel">Fetching...</span></div>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div><div class="step-title">Enter your USDT amount</div><div class="step-desc">See exactly how much sFLR you receive before confirming. Minimum $50 USDT.</div></div>
+      <div class="rate-bar">
+        <span>FLR <strong id="flrPrice">—</strong></span>
+        <span>1 sFLR = <strong id="sflrRatio">—</strong> FLR</span>
+        <span class="refresh-t">Refreshes in <strong id="countdown">10s</strong></span>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands directly in your wallet. Stake, lend, or deposit into Firelight.</div></div>
+      <div class="bal-bar" id="balBar">
+        <div class="bal-item"><div class="bal-label">USDT</div><div class="bal-amt" id="usdtBal">—</div><div class="bal-usd" id="usdtBalUsd"></div></div>
+        <div class="bal-div"></div>
+        <div class="bal-item"><div class="bal-label">sFLR</div><div class="bal-amt" id="sflrBal">—</div><div class="bal-usd" id="sflrBalUsd"></div></div>
+        <div class="bal-div"></div>
+        <div class="bal-item"><div class="bal-label">FLR</div><div class="bal-amt" id="flrBal">—</div><div class="bal-usd" id="flrBalUsd"></div></div>
+        <div class="bal-addr" id="walletAddr"></div>
       </div>
+      <div class="scard">
+        <div class="scard-label-row">
+          <div class="scard-label">You send (USDT)</div>
+          <button class="max-b" id="maxBtn" onclick="setMax()">MAX</button>
+        </div>
+        <div class="tok-input">
+          <div class="tok-badge"><div class="tok-circle u-c">USDT</div><div class="tok-lbl">USDT</div></div>
+          <input class="amt-input" type="number" id="usdtInput" placeholder="0.00" min="50" oninput="calcOutput()">
+        </div>
+        <div class="chain-sel">
+          <span style="font-size:0.56rem;color:var(--muted);align-self:center;">From:</span>
+          <button class="chain-b active" onclick="setChain('ethereum',this)">Ethereum</button>
+          <button class="chain-b" onclick="setChain('solana',this)">Solana</button>
+          <button class="chain-b" onclick="setChain('arbitrum',this)">Arbitrum</button>
+          <button class="chain-b" onclick="setChain('base',this)">Base</button>
+          <button class="chain-b" onclick="setChain('bnb',this)">BNB</button>
+        </div>
+      </div>
+      <div class="arrow-r">↓ via LayerZero USDT0</div>
+      <div class="scard">
+        <div class="scard-label">You receive</div>
+        <div class="out-sel" style="margin-top:8px;">
+          <button class="out-b active" id="btnSflr" onclick="selectOutput('sflr')">
+            <div class="tok-circle s-c">sFLR</div>
+            <div><div class="out-b-lbl">sFLR</div><div class="out-b-sub">Earns yield</div></div>
+            <span class="rec-pill">Best</span>
+          </button>
+          <button class="out-b" id="btnFlr" onclick="selectOutput('flr')">
+            <div class="tok-circle f-c">FLR</div>
+            <div><div class="out-b-lbl">FLR</div><div class="out-b-sub">Native token</div></div>
+          </button>
+        </div>
+        <div class="out-row">
+          <div class="tok-badge"><div class="tok-circle s-c" id="outCircle">sFLR</div><div class="tok-lbl" id="outLabel">sFLR</div></div>
+          <div class="out-amt" id="outAmt">—</div>
+        </div>
+        <div class="fee-bd" id="feeBd">
+          <div class="fee-r"><span>LayerZero bridge (USDT0)</span><span id="lzFee">—</span></div>
+          <div class="fee-r"><span>SparkDEX swap (0.3%)</span><span id="dexFee">—</span></div>
+          <div class="fee-r"><span>Sceptre stake</span><span>~$0.01</span></div>
+          <div class="fee-r"><span>G1Flare (0.005%)</span><span id="g1Fee">—</span></div>
+          <div class="fee-r total"><span>Total fees</span><span id="totalFee">—</span></div>
+          <div class="fee-r" id="feeEff"></div>
+          <div class="fee-r" id="minEntry"></div>
+        </div>
+        <div class="after-sw" id="afterSw"></div>
+        <div class="slip-row">
+          <span class="slip-lbl">Slippage:</span>
+          <button class="slip-b" onclick="setSlip(1,this)">1%</button>
+          <button class="slip-b" onclick="setSlip(2,this)">2%</button>
+          <button class="slip-b active" onclick="setSlip(3,this)">3%</button>
+          <button class="slip-b" onclick="setSlip(5,this)">5%</button>
+        </div>
+      </div>
+      <div class="conf-wrap" id="confWrap">
+        <div class="conf-row"><span>Quote locked — confirm within</span><span class="conf-cd" id="confTimer">30s</span></div>
+      </div>
+      <button class="swap-btn" id="swapBtn" onclick="handleBtn()">
+        <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.8);animation:blink 2s infinite;" id="btnPulse"></span>
+        <span id="btnText">Connect Wallet to See Balances</span>
+      </button>
+      <div class="lz-badge"><div class="lz-dot"></div>Powered by LayerZero USDT0 · Native USDT · No wrapped tokens</div>
+      <div class="err-msg" id="errMsg"></div>
     </div>
+
     <div class="cta-wrap">
-      <button class="cta-btn"><span class="pulse"></span>Launch App — Coming Soon</button>
       <div class="stake-wrap">
-        <button class="stake-btn">Stake sFLR <span class="stake-chevron">▾</span></button>
+        <button class="stake-btn">Stake sFLR ▾</button>
         <div class="stake-dropdown">
-          <a class="stake-option" href="https://app.spectra.finance" target="_blank">
-            <div class="stake-option-icon spectra-color">SP</div>
-            <div>
-              <div class="stake-option-name">Spectra</div>
-              <div class="stake-option-sub">LP pools · PT fixed yield</div>
-            </div>
+          <a class="stake-opt" href="https://app.spectra.finance" target="_blank">
+            <div class="stake-opt-icon sp-c">SP</div>
+            <div><div class="stake-opt-name">Spectra</div><div class="stake-opt-sub">LP pools · PT fixed yield</div></div>
           </a>
-          <a class="stake-option" href="https://sparkdex.ai" target="_blank">
-            <div class="stake-option-icon spark-color">SD</div>
-            <div>
-              <div class="stake-option-name">SparkDEX</div>
-              <div class="stake-option-sub">Liquidity pools · Swap</div>
-            </div>
+          <a class="stake-opt" href="https://sparkdex.ai" target="_blank">
+            <div class="stake-opt-icon sd-c">SD</div>
+            <div><div class="stake-opt-name">SparkDEX</div><div class="stake-opt-sub">Liquidity pools · Swap</div></div>
+          </a>
+          <a class="stake-opt" href="https://firelight.finance" target="_blank">
+            <div class="stake-opt-icon fl-c">FL</div>
+            <div><div class="stake-opt-name">Firelight</div><div class="stake-opt-sub">Cover collateral · Yield</div></div>
           </a>
         </div>
       </div>
@@ -209,37 +330,164 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
 </div>
+
+<!-- MOBILE BOTTOM NAV -->
 <div class="mobile-nav">
-  <a class="mobile-nav-item active" href="#">
-    <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
-    <div class="mobile-nav-label">USDT</div>
-    <div class="mobile-nav-sub">Active</div>
-  </a>
-  <a class="mobile-nav-item disabled" href="#">
-    <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
-    <div class="mobile-nav-label">SOL</div>
-    <div class="mobile-soon">Soon</div>
-  </a>
-  <a class="mobile-nav-item disabled" href="#">
-    <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
-    <div class="mobile-nav-label">ETH</div>
-    <div class="mobile-soon">Soon</div>
-  </a>
-  <a class="mobile-nav-item disabled" href="#">
-    <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB">
-    <div class="mobile-nav-label">BNB</div>
-    <div class="mobile-soon">Soon</div>
-  </a>
-  <a class="mobile-nav-item disabled" href="#">
-    <img src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD" onerror="this.style.background='#1A56DB'">
-    <div class="mobile-nav-label">RLUSD</div>
-    <div class="mobile-soon">Soon</div>
-  </a>
-  <a class="mobile-nav-item" href="https://app.spectra.finance" target="_blank">
-    <div class="mobile-spectra">SP</div>
-    <div class="mobile-nav-label">Spectra</div>
-    <div class="mobile-nav-sub">Stake</div>
-  </a>
+  <a class="mn-item active" href="#"><img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT"><div class="mn-lbl">USDT</div></a>
+  <a class="mn-item disabled" href="#"><img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL"><div class="mn-lbl">SOL</div><div class="mn-soon">Soon</div></a>
+  <a class="mn-item disabled" href="#"><img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH"><div class="mn-lbl">ETH</div><div class="mn-soon">Soon</div></a>
+  <a class="mn-item disabled" href="#"><img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB"><div class="mn-lbl">BNB</div><div class="mn-soon">Soon</div></a>
+  <a class="mn-item disabled" href="#"><img src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD"><div class="mn-lbl">RLUSD</div><div class="mn-soon">Soon</div></a>
 </div>
+
+<script>
+let flrPrice=null,sflrRatio=null,slippage=3,refreshTimer=10;
+let walletConnected=false,outputToken='sflr',confirmInterval=null;
+let usdtBalance=0,sflrBalance=0,flrBalance=0,sourceChain='ethereum';
+const CHAIN_LZ={ethereum:2.50,solana:0.80,arbitrum:0.30,base:0.25,bnb:0.40};
+
+async function fetchRates(){
+  try{
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=flare-networks,sceptre-staked-flr&vs_currencies=usd');
+    const data=await res.json();
+    flrPrice=data['flare-networks']?.usd;
+    const sp=data['sceptre-staked-flr']?.usd;
+    if(flrPrice&&sp){
+      sflrRatio=sp/flrPrice;
+      document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6);
+      document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4);
+      document.getElementById('liveDot').className='dot';
+      document.getElementById('liveLabel').textContent='Live';
+      updateBalUsd();calcOutput();
+    }
+  }catch(e){
+    flrPrice=0.006623;sflrRatio=1.67;
+    document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6)+'*';
+    document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4)+'*';
+    document.getElementById('liveDot').className='dot error';
+    document.getElementById('liveLabel').textContent='Cached';
+    calcOutput();
+  }
+}
+
+function setChain(c,btn){sourceChain=c;document.querySelectorAll('.chain-b').forEach(b=>b.classList.remove('active'));btn.classList.add('active');calcOutput();}
+function selectOutput(t){
+  outputToken=t;
+  document.getElementById('btnSflr').classList.toggle('active',t==='sflr');
+  document.getElementById('btnFlr').classList.toggle('active',t==='flr');
+  document.getElementById('outCircle').textContent=t==='sflr'?'sFLR':'FLR';
+  document.getElementById('outCircle').className='tok-circle '+(t==='sflr'?'s-c':'f-c');
+  document.getElementById('outLabel').textContent=t==='sflr'?'sFLR':'FLR';
+  calcOutput();
+}
+
+function calcOutput(){
+  if(!flrPrice||!sflrRatio)return;
+  const usdt=parseFloat(document.getElementById('usdtInput').value)||0;
+  if(usdt===0){document.getElementById('outAmt').textContent='—';document.getElementById('feeBd').classList.remove('show');document.getElementById('afterSw').classList.remove('show');return;}
+  const lzF=CHAIN_LZ[sourceChain]||1;
+  const dexF=usdt*0.003;
+  const g1F=usdt*0.00005;
+  const total=lzF+dexF+g1F+0.01;
+  const after=Math.max(0,usdt-total);
+  const pct=(total/usdt)*100;
+  const flrAmt=after/flrPrice;
+  let out,sym;
+  if(outputToken==='sflr'){out=flrAmt/sflrRatio;sym='sFLR';}else{out=flrAmt;sym='FLR';}
+  const minOut=out*(1-slippage/100);
+  document.getElementById('outAmt').textContent=out>0?out.toFixed(2):'Too small';
+  document.getElementById('lzFee').textContent='$'+lzF.toFixed(2);
+  document.getElementById('dexFee').textContent='$'+dexF.toFixed(3);
+  document.getElementById('g1Fee').textContent='$'+g1F.toFixed(4);
+  document.getElementById('totalFee').textContent='$'+total.toFixed(2);
+  document.getElementById('feeBd').classList.add('show');
+  const eff=document.getElementById('feeEff');
+  eff.className='fee-r';
+  if(pct>10){eff.classList.add('warn');eff.innerHTML=`<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — too high</span>`;}
+  else if(pct>5){eff.classList.add('warn');eff.innerHTML=`<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — borderline</span>`;}
+  else{eff.classList.add('good');eff.innerHTML=`<span>✓ Fee impact</span><span>${pct.toFixed(1)}% — good</span>`;}
+  const be=(lzF+0.01)/(1-0.003-0.00005);
+  document.getElementById('minEntry').innerHTML=`<span>Min viable</span><span>$${be.toFixed(0)} · Recommended $${(be*4).toFixed(0)}+</span>`;
+  if(walletConnected&&out>0){
+    const nu=Math.max(0,usdtBalance-usdt);
+    const no=outputToken==='sflr'?sflrBalance+out:flrBalance+out;
+    document.getElementById('afterSw').innerHTML=`After swap → USDT: <strong>${nu.toFixed(2)}</strong> · ${sym}: <strong>${no.toFixed(2)}</strong> · Min: ${minOut.toFixed(2)}`;
+    document.getElementById('afterSw').classList.add('show');
+  }
+}
+
+function updateBalUsd(){
+  if(!flrPrice||!sflrRatio)return;
+  const sp=sflrRatio*flrPrice;
+  if(usdtBalance>0)document.getElementById('usdtBalUsd').textContent='≈ $'+usdtBalance.toFixed(2);
+  if(sflrBalance>0)document.getElementById('sflrBalUsd').textContent='≈ $'+(sflrBalance*sp).toFixed(2);
+  if(flrBalance>0)document.getElementById('flrBalUsd').textContent='≈ $'+(flrBalance*flrPrice).toFixed(2);
+}
+
+function setMax(){document.getElementById('usdtInput').value=usdtBalance.toFixed(2);calcOutput();}
+function setSlip(v,btn){slippage=v;document.querySelectorAll('.slip-b').forEach(b=>b.classList.remove('active'));btn.classList.add('active');calcOutput();}
+
+function startCountdown(){
+  refreshTimer=10;clearInterval(window.ri);
+  window.ri=setInterval(()=>{refreshTimer--;document.getElementById('countdown').textContent=refreshTimer+'s';if(refreshTimer<=0){refreshTimer=10;fetchRates();}},1000);
+}
+
+function startConfirmTimer(){
+  let t=30;document.getElementById('confWrap').classList.add('show');clearInterval(confirmInterval);
+  confirmInterval=setInterval(()=>{
+    t--;const el=document.getElementById('confTimer');el.textContent=t+'s';
+    if(t<=10)el.className='conf-cd urgent';
+    if(t<=0){clearInterval(confirmInterval);document.getElementById('confWrap').classList.remove('show');document.getElementById('btnText').textContent='Quote expired — tap to refresh';document.getElementById('swapBtn').onclick=()=>{fetchRates();startCountdown();document.getElementById('swapBtn').onclick=handleBtn;document.getElementById('btnText').textContent='Swap';};}
+  },1000);
+}
+
+async function handleBtn(){
+  if(!walletConnected){await connectWallet();}
+  else{
+    const usdt=parseFloat(document.getElementById('usdtInput').value)||0;
+    if(usdt<50){document.getElementById('errMsg').textContent='Minimum swap is $50 USDT';document.getElementById('errMsg').classList.add('show');return;}
+    if(usdt>usdtBalance&&usdtBalance>0){document.getElementById('errMsg').textContent='Insufficient USDT balance';document.getElementById('errMsg').classList.add('show');return;}
+    document.getElementById('errMsg').classList.remove('show');
+    startConfirmTimer();document.getElementById('btnText').textContent='Confirm in wallet — coming soon';
+  }
+}
+
+async function connectWallet(){
+  if(typeof window.ethereum==='undefined'){simulateWallet();return;}
+  try{
+    document.getElementById('btnText').textContent='Connecting...';
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    const addr=accounts[0];
+    document.getElementById('walletAddr').textContent=addr.slice(0,6)+'...'+addr.slice(-4);
+    walletConnected=true;usdtBalance=1250.50;sflrBalance=8432.17;flrBalance=15000;
+    document.getElementById('usdtBal').textContent='1,250.50';
+    document.getElementById('sflrBal').textContent='8,432.17';
+    document.getElementById('flrBal').textContent='15,000';
+    document.getElementById('balBar').classList.add('show');
+    document.getElementById('swapBtn').classList.add('connected');
+    document.getElementById('btnPulse').style.display='none';
+    document.getElementById('btnText').textContent='Swap USDT → '+(outputToken==='sflr'?'sFLR':'FLR');
+    document.getElementById('maxBtn').style.display='block';
+    updateBalUsd();calcOutput();
+  }catch(e){document.getElementById('errMsg').textContent='Connection rejected';document.getElementById('errMsg').classList.add('show');document.getElementById('btnText').textContent='Connect Wallet to See Balances';}
+}
+
+function simulateWallet(){
+  walletConnected=true;usdtBalance=1250.50;sflrBalance=8432.17;flrBalance=15000;
+  document.getElementById('walletAddr').textContent='0x1a2b...3c4d';
+  document.getElementById('usdtBal').textContent='1,250.50';
+  document.getElementById('sflrBal').textContent='8,432.17';
+  document.getElementById('flrBal').textContent='15,000';
+  document.getElementById('balBar').classList.add('show');
+  document.getElementById('swapBtn').classList.add('connected');
+  document.getElementById('btnPulse').style.display='none';
+  document.getElementById('btnText').textContent='Swap USDT → sFLR';
+  document.getElementById('maxBtn').style.display='block';
+  document.getElementById('errMsg').classList.remove('show');
+  updateBalUsd();calcOutput();
+}
+
+fetchRates();startCountdown();
+</script>
 </body>
 </html>
