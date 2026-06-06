@@ -452,24 +452,33 @@ async function handleBtn(){
   }
 }
 
-async function connectWallet(){
-  if(typeof window.ethereum==='undefined'){simulateWallet();return;}
+async function fetchRates(){
   try{
-    document.getElementById('btnText').textContent='Connecting...';
-    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
-    const addr=accounts[0];
-    document.getElementById('walletAddr').textContent=addr.slice(0,6)+'...'+addr.slice(-4);
-    walletConnected=true;usdtBalance=1250.50;sflrBalance=8432.17;flrBalance=15000;
-    document.getElementById('usdtBal').textContent='1,250.50';
-    document.getElementById('sflrBal').textContent='8,432.17';
-    document.getElementById('flrBal').textContent='15,000';
-    document.getElementById('balBar').classList.add('show');
-    document.getElementById('swapBtn').classList.add('connected');
-    document.getElementById('btnPulse').style.display='none';
-    document.getElementById('btnText').textContent='Swap USDT → '+(outputToken==='sflr'?'sFLR':'FLR');
-    document.getElementById('maxBtn').style.display='block';
-    updateBalUsd();calcOutput();
-  }catch(e){document.getElementById('errMsg').textContent='Connection rejected';document.getElementById('errMsg').classList.add('show');document.getElementById('btnText').textContent='Connect Wallet to See Balances';}
+    const [flrRes, sflrRes] = await Promise.all([
+      fetch('https://api.coincap.io/v2/assets/flare'),
+      fetch('https://api.coincap.io/v2/assets/sceptre-staked-flr')
+    ]);
+    const flrData = await flrRes.json();
+    const sflrData = await sflrRes.json();
+    const newFlrPrice = parseFloat(flrData?.data?.priceUsd);
+    const newSflrPrice = parseFloat(sflrData?.data?.priceUsd);
+    if(newFlrPrice && newSflrPrice){
+      flrPrice = newFlrPrice;
+      sflrRatio = newSflrPrice / newFlrPrice;
+      document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6);
+      document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4);
+      document.getElementById('liveDot').className='dot';
+      document.getElementById('liveLabel').textContent='Live';
+      updateBalUsd();calcOutput();
+    } else { throw new Error('bad data'); }
+  }catch(e){
+    if(!flrPrice){ flrPrice=0.006623; sflrRatio=1.67; }
+    document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6)+'*';
+    document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4)+'*';
+    document.getElementById('liveDot').className='dot error';
+    document.getElementById('liveLabel').textContent='Cached';
+    calcOutput();
+  }
 }
 
 function simulateWallet(){
