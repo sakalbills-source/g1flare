@@ -24,7 +24,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .token-info { flex: 1; }
 .token-name { font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
 .token-sub { font-size: 0.66rem; color: var(--muted); }
-.token-arrow { color: #ccc; font-size: 1rem; transition: color 0.2s; }
+.token-arrow { color: #ccc; font-size: 1rem; }
 .token-row.active .token-arrow { color: var(--pink); }
 .soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 8px; border-radius: 8px; }
 .divider { height: 1px; background: var(--border); margin: 8px 0; }
@@ -55,15 +55,31 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--pink); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; color: #fff; }
 .step-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-.cta-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.cta-wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--pink); color: #fff; border: none; padding: 17px 44px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .cta-btn:hover { background: var(--pink-dark); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,60,120,0.25); }
 .pulse { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.8); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
-.spectra-cta { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 17px 32px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-.spectra-cta:hover { background: #6C63FF; color: #fff; transform: translateY(-2px); }
+
+/* STAKE DROPDOWN */
+.stake-wrap { position: relative; display: inline-block; }
+.stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 17px 32px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.stake-btn:hover { background: #6C63FF; color: #fff; }
+.stake-chevron { font-size: 0.7rem; transition: transform 0.2s; }
+.stake-wrap:hover .stake-chevron { transform: rotate(180deg); }
+.stake-dropdown { position: absolute; bottom: calc(100% + 10px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 8px; min-width: 200px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: all 0.2s; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.stake-wrap:hover .stake-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
+.stake-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; text-decoration: none; color: var(--text); transition: all 0.15s; }
+.stake-option:hover { background: var(--bg); }
+.stake-option-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.52rem; font-weight: 800; color: white; flex-shrink: 0; }
+.spectra-color { background: linear-gradient(135deg, #6C63FF, #A78BFA); }
+.spark-color { background: linear-gradient(135deg, #FF6B00, #FFB347); }
+.stake-option-name { font-size: 0.85rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
+.stake-option-sub { font-size: 0.62rem; color: var(--muted); }
+
 .meta { margin-top: 18px; font-size: 0.72rem; color: #bbb; }
 .mobile-nav { display: none; }
+
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
@@ -71,7 +87,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   .g1-logo { font-size: 2.8rem; }
   .tagline { font-size: 0.95rem; margin-bottom: 28px; }
   .cta-btn { width: 100%; justify-content: center; }
-  .spectra-cta { width: 100%; justify-content: center; }
+  .stake-wrap { width: 100%; }
+  .stake-btn { width: 100%; justify-content: center; }
+  .stake-dropdown { bottom: auto; top: calc(100% + 10px); }
   .cta-wrap { flex-direction: column; align-items: stretch; }
   .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 12px 16px 24px; gap: 6px; z-index: 100; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 12px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; transition: all 0.2s; }
@@ -105,11 +123,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       <span class="token-arrow">›</span>
     </a>
     <a class="token-row disabled" href="#">
-      <img class="token-icon" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="FLR">
-      <div class="token-info"><div class="token-name">Flare</div><div class="token-sub">FLR</div></div>
-      <span class="soon-pill">Soon</span>
-    </a>
-    <a class="token-row disabled" href="#">
       <img class="token-icon" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
       <div class="token-info"><div class="token-name">Solana</div><div class="token-sub">SOL</div></div>
       <span class="soon-pill">Soon</span>
@@ -117,6 +130,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <a class="token-row disabled" href="#">
       <img class="token-icon" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
       <div class="token-info"><div class="token-name">Ethereum</div><div class="token-sub">ETH</div></div>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a class="token-row disabled" href="#">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB">
+      <div class="token-info"><div class="token-name">BNB</div><div class="token-sub">Binance</div></div>
       <span class="soon-pill">Soon</span>
     </a>
     <a class="token-row disabled" href="#">
@@ -163,12 +181,30 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands directly in your wallet. Stake on Kinetic, deposit into Firelight, or hold.</div></div>
+        <div><div class="step-title">Receive sFLR</div><div class="step-desc">sFLR lands directly in your wallet. Stake, lend, or deposit into Firelight.</div></div>
       </div>
     </div>
     <div class="cta-wrap">
       <button class="cta-btn"><span class="pulse"></span>Launch App — Coming Soon</button>
-      <a class="spectra-cta" href="https://app.spectra.finance" target="_blank">Stake on Spectra →</a>
+      <div class="stake-wrap">
+        <button class="stake-btn">Stake sFLR <span class="stake-chevron">▾</span></button>
+        <div class="stake-dropdown">
+          <a class="stake-option" href="https://app.spectra.finance" target="_blank">
+            <div class="stake-option-icon spectra-color">SP</div>
+            <div>
+              <div class="stake-option-name">Spectra</div>
+              <div class="stake-option-sub">LP pools · PT fixed yield</div>
+            </div>
+          </a>
+          <a class="stake-option" href="https://sparkdex.ai" target="_blank">
+            <div class="stake-option-icon spark-color">SD</div>
+            <div>
+              <div class="stake-option-name">SparkDEX</div>
+              <div class="stake-option-sub">Liquidity pools · Swap</div>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
     <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
@@ -180,11 +216,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="mobile-nav-sub">Active</div>
   </a>
   <a class="mobile-nav-item disabled" href="#">
-    <img src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="FLR">
-    <div class="mobile-nav-label">FLR</div>
-    <div class="mobile-soon">Soon</div>
-  </a>
-  <a class="mobile-nav-item disabled" href="#">
     <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
     <div class="mobile-nav-label">SOL</div>
     <div class="mobile-soon">Soon</div>
@@ -192,6 +223,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <a class="mobile-nav-item disabled" href="#">
     <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
     <div class="mobile-nav-label">ETH</div>
+    <div class="mobile-soon">Soon</div>
+  </a>
+  <a class="mobile-nav-item disabled" href="#">
+    <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB">
+    <div class="mobile-nav-label">BNB</div>
     <div class="mobile-soon">Soon</div>
   </a>
   <a class="mobile-nav-item disabled" href="#">
