@@ -163,11 +163,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <div class="sidebar">
     <div class="top-logos">
       <div class="logo-badge">
-        <img class="badge-img" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="Flare" onerror="this.style.background='#FF3C78'">
+        <img class="badge-img" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="Flare">
         <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
       </div>
       <div class="logo-badge">
-        <img class="badge-img" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <img class="badge-img" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight">
         <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
       </div>
     </div>
@@ -193,7 +193,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       <span class="soon-pill">Soon</span>
     </a>
     <a class="token-row disabled" href="#">
-      <img class="token-icon" src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD" onerror="this.style.background='#1A56DB'">
+      <img class="token-icon" src="https://assets.coingecko.com/coins/images/44190/small/RLUSD.png" alt="RLUSD">
       <div class="token-info"><div class="token-name">RLUSD</div><div class="token-sub">Ripple USD</div></div>
       <span class="soon-pill">Soon</span>
     </a>
@@ -201,13 +201,13 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="receive-box">
       <div class="receive-label">You receive</div>
       <div class="receive-row">
-        <img class="token-icon" src="https://assets.coingecko.com/coins/images/30877/small/sflr.png" alt="sFLR" onerror="this.src='https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png'">
+        <img class="token-icon" src="https://assets.coingecko.com/coins/images/30877/small/sflr.png" alt="sFLR">
         <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
       </div>
     </div>
     <div class="firelight-box">
       <div class="fl-top">
-        <img class="fl-icon" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight" onerror="this.style.background='#FF6B00'">
+        <img class="fl-icon" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight">
         <div class="fl-name">Firelight</div>
         <div class="fl-badge">Composable</div>
       </div>
@@ -224,7 +224,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="g1-logo">G1FLARE</div>
     <p class="tagline">The simplest onramp from USDT to sFLR on Flare Network. Three steps. No complexity.</p>
 
-    <!-- SWAP WIDGET -->
     <div class="swap-wrap">
       <div class="swap-header">
         <div class="swap-title">Swap</div>
@@ -331,7 +330,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   </div>
 </div>
 
-<!-- MOBILE BOTTOM NAV -->
 <div class="mobile-nav">
   <a class="mn-item active" href="#"><img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT"><div class="mn-lbl">USDT</div></a>
   <a class="mn-item disabled" href="#"><img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL"><div class="mn-lbl">SOL</div><div class="mn-soon">Soon</div></a>
@@ -341,119 +339,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 </div>
 
 <script>
-let flrPrice=null,sflrRatio=null,slippage=3,refreshTimer=10;
-let walletConnected=false,outputToken='sflr',confirmInterval=null;
-let usdtBalance=0,sflrBalance=0,flrBalance=0,sourceChain='ethereum';
-const CHAIN_LZ={ethereum:2.50,solana:0.80,arbitrum:0.30,base:0.25,bnb:0.40};
+let flrPrice=null, sflrRatio=null, slippage=3, refreshTimer=10;
+let walletConnected=false, outputToken='sflr', confirmInterval=null;
+let usdtBalance=0, sflrBalance=0, flrBalance=0, sourceChain='ethereum';
+const CHAIN_LZ = {ethereum:2.50, solana:0.80, arbitrum:0.30, base:0.25, bnb:0.40};
 
+// CoinCap API — free, no key needed, CORS-friendly
 async function fetchRates(){
-  try{
-    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=flare-networks,sceptre-staked-flr&vs_currencies=usd');
-    const data=await res.json();
-    flrPrice=data['flare-networks']?.usd;
-    const sp=data['sceptre-staked-flr']?.usd;
-    if(flrPrice&&sp){
-      sflrRatio=sp/flrPrice;
-      document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6);
-      document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4);
-      document.getElementById('liveDot').className='dot';
-      document.getElementById('liveLabel').textContent='Live';
-      updateBalUsd();calcOutput();
-    }
-  }catch(e){
-    flrPrice=0.006623;sflrRatio=1.67;
-    document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6)+'*';
-    document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4)+'*';
-    document.getElementById('liveDot').className='dot error';
-    document.getElementById('liveLabel').textContent='Cached';
-    calcOutput();
-  }
-}
-
-function setChain(c,btn){sourceChain=c;document.querySelectorAll('.chain-b').forEach(b=>b.classList.remove('active'));btn.classList.add('active');calcOutput();}
-function selectOutput(t){
-  outputToken=t;
-  document.getElementById('btnSflr').classList.toggle('active',t==='sflr');
-  document.getElementById('btnFlr').classList.toggle('active',t==='flr');
-  document.getElementById('outCircle').textContent=t==='sflr'?'sFLR':'FLR';
-  document.getElementById('outCircle').className='tok-circle '+(t==='sflr'?'s-c':'f-c');
-  document.getElementById('outLabel').textContent=t==='sflr'?'sFLR':'FLR';
-  calcOutput();
-}
-
-function calcOutput(){
-  if(!flrPrice||!sflrRatio)return;
-  const usdt=parseFloat(document.getElementById('usdtInput').value)||0;
-  if(usdt===0){document.getElementById('outAmt').textContent='—';document.getElementById('feeBd').classList.remove('show');document.getElementById('afterSw').classList.remove('show');return;}
-  const lzF=CHAIN_LZ[sourceChain]||1;
-  const dexF=usdt*0.003;
-  const g1F=usdt*0.00005;
-  const total=lzF+dexF+g1F+0.01;
-  const after=Math.max(0,usdt-total);
-  const pct=(total/usdt)*100;
-  const flrAmt=after/flrPrice;
-  let out,sym;
-  if(outputToken==='sflr'){out=flrAmt/sflrRatio;sym='sFLR';}else{out=flrAmt;sym='FLR';}
-  const minOut=out*(1-slippage/100);
-  document.getElementById('outAmt').textContent=out>0?out.toFixed(2):'Too small';
-  document.getElementById('lzFee').textContent='$'+lzF.toFixed(2);
-  document.getElementById('dexFee').textContent='$'+dexF.toFixed(3);
-  document.getElementById('g1Fee').textContent='$'+g1F.toFixed(4);
-  document.getElementById('totalFee').textContent='$'+total.toFixed(2);
-  document.getElementById('feeBd').classList.add('show');
-  const eff=document.getElementById('feeEff');
-  eff.className='fee-r';
-  if(pct>10){eff.classList.add('warn');eff.innerHTML=`<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — too high</span>`;}
-  else if(pct>5){eff.classList.add('warn');eff.innerHTML=`<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — borderline</span>`;}
-  else{eff.classList.add('good');eff.innerHTML=`<span>✓ Fee impact</span><span>${pct.toFixed(1)}% — good</span>`;}
-  const be=(lzF+0.01)/(1-0.003-0.00005);
-  document.getElementById('minEntry').innerHTML=`<span>Min viable</span><span>$${be.toFixed(0)} · Recommended $${(be*4).toFixed(0)}+</span>`;
-  if(walletConnected&&out>0){
-    const nu=Math.max(0,usdtBalance-usdt);
-    const no=outputToken==='sflr'?sflrBalance+out:flrBalance+out;
-    document.getElementById('afterSw').innerHTML=`After swap → USDT: <strong>${nu.toFixed(2)}</strong> · ${sym}: <strong>${no.toFixed(2)}</strong> · Min: ${minOut.toFixed(2)}`;
-    document.getElementById('afterSw').classList.add('show');
-  }
-}
-
-function updateBalUsd(){
-  if(!flrPrice||!sflrRatio)return;
-  const sp=sflrRatio*flrPrice;
-  if(usdtBalance>0)document.getElementById('usdtBalUsd').textContent='≈ $'+usdtBalance.toFixed(2);
-  if(sflrBalance>0)document.getElementById('sflrBalUsd').textContent='≈ $'+(sflrBalance*sp).toFixed(2);
-  if(flrBalance>0)document.getElementById('flrBalUsd').textContent='≈ $'+(flrBalance*flrPrice).toFixed(2);
-}
-
-function setMax(){document.getElementById('usdtInput').value=usdtBalance.toFixed(2);calcOutput();}
-function setSlip(v,btn){slippage=v;document.querySelectorAll('.slip-b').forEach(b=>b.classList.remove('active'));btn.classList.add('active');calcOutput();}
-
-function startCountdown(){
-  refreshTimer=10;clearInterval(window.ri);
-  window.ri=setInterval(()=>{refreshTimer--;document.getElementById('countdown').textContent=refreshTimer+'s';if(refreshTimer<=0){refreshTimer=10;fetchRates();}},1000);
-}
-
-function startConfirmTimer(){
-  let t=30;document.getElementById('confWrap').classList.add('show');clearInterval(confirmInterval);
-  confirmInterval=setInterval(()=>{
-    t--;const el=document.getElementById('confTimer');el.textContent=t+'s';
-    if(t<=10)el.className='conf-cd urgent';
-    if(t<=0){clearInterval(confirmInterval);document.getElementById('confWrap').classList.remove('show');document.getElementById('btnText').textContent='Quote expired — tap to refresh';document.getElementById('swapBtn').onclick=()=>{fetchRates();startCountdown();document.getElementById('swapBtn').onclick=handleBtn;document.getElementById('btnText').textContent='Swap';};}
-  },1000);
-}
-
-async function handleBtn(){
-  if(!walletConnected){await connectWallet();}
-  else{
-    const usdt=parseFloat(document.getElementById('usdtInput').value)||0;
-    if(usdt<50){document.getElementById('errMsg').textContent='Minimum swap is $50 USDT';document.getElementById('errMsg').classList.add('show');return;}
-    if(usdt>usdtBalance&&usdtBalance>0){document.getElementById('errMsg').textContent='Insufficient USDT balance';document.getElementById('errMsg').classList.add('show');return;}
-    document.getElementById('errMsg').classList.remove('show');
-    startConfirmTimer();document.getElementById('btnText').textContent='Confirm in wallet — coming soon';
-  }
-}
-
-async function fetchRates(){
-  try{
+  try {
     const [flrRes, sflrRes] = await Promise.all([
       fetch('https://api.coincap.io/v2/assets/flare'),
       fetch('https://api.coincap.io/v2/assets/sceptre-staked-flr')
@@ -462,41 +355,270 @@ async function fetchRates(){
     const sflrData = await sflrRes.json();
     const newFlrPrice = parseFloat(flrData?.data?.priceUsd);
     const newSflrPrice = parseFloat(sflrData?.data?.priceUsd);
-    if(newFlrPrice && newSflrPrice){
+    
+    if(newFlrPrice && newSflrPrice && newFlrPrice > 0){
       flrPrice = newFlrPrice;
       sflrRatio = newSflrPrice / newFlrPrice;
-      document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6);
-      document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4);
-      document.getElementById('liveDot').className='dot';
-      document.getElementById('liveLabel').textContent='Live';
-      updateBalUsd();calcOutput();
-    } else { throw new Error('bad data'); }
-  }catch(e){
-    if(!flrPrice){ flrPrice=0.006623; sflrRatio=1.67; }
-    document.getElementById('flrPrice').textContent='$'+flrPrice.toFixed(6)+'*';
-    document.getElementById('sflrRatio').textContent=sflrRatio.toFixed(4)+'*';
-    document.getElementById('liveDot').className='dot error';
-    document.getElementById('liveLabel').textContent='Cached';
+      document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6);
+      document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4);
+      document.getElementById('liveDot').className = 'dot';
+      document.getElementById('liveLabel').textContent = 'Live';
+      updateBalUsd();
+      calcOutput();
+    } else {
+      throw new Error('Invalid price data');
+    }
+  } catch(e) {
+    // Fallback to cached if available, else hardcoded
+    if(!flrPrice) { flrPrice = 0.006623; sflrRatio = 1.67; }
+    document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6) + '*';
+    document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4) + '*';
+    document.getElementById('liveDot').className = 'dot error';
+    document.getElementById('liveLabel').textContent = 'Cached';
     calcOutput();
   }
 }
 
-function simulateWallet(){
-  walletConnected=true;usdtBalance=1250.50;sflrBalance=8432.17;flrBalance=15000;
-  document.getElementById('walletAddr').textContent='0x1a2b...3c4d';
-  document.getElementById('usdtBal').textContent='1,250.50';
-  document.getElementById('sflrBal').textContent='8,432.17';
-  document.getElementById('flrBal').textContent='15,000';
-  document.getElementById('balBar').classList.add('show');
-  document.getElementById('swapBtn').classList.add('connected');
-  document.getElementById('btnPulse').style.display='none';
-  document.getElementById('btnText').textContent='Swap USDT → sFLR';
-  document.getElementById('maxBtn').style.display='block';
-  document.getElementById('errMsg').classList.remove('show');
-  updateBalUsd();calcOutput();
+function setChain(c, btn){
+  sourceChain = c;
+  document.querySelectorAll('.chain-b').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calcOutput();
 }
 
-fetchRates();startCountdown();
+function selectOutput(t){
+  outputToken = t;
+  document.getElementById('btnSflr').classList.toggle('active', t === 'sflr');
+  document.getElementById('btnFlr').classList.toggle('active', t === 'flr');
+  document.getElementById('outCircle').textContent = t === 'sflr' ? 'sFLR' : 'FLR';
+  document.getElementById('outCircle').className = 'tok-circle ' + (t === 'sflr' ? 's-c' : 'f-c');
+  document.getElementById('outLabel').textContent = t === 'sflr' ? 'sFLR' : 'FLR';
+  calcOutput();
+}
+
+function calcOutput(){
+  if(!flrPrice || !sflrRatio) return;
+  const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
+  if(usdt === 0){
+    document.getElementById('outAmt').textContent = '—';
+    document.getElementById('feeBd').classList.remove('show');
+    document.getElementById('afterSw').classList.remove('show');
+    return;
+  }
+  
+  const lzF = CHAIN_LZ[sourceChain] || 1;
+  const dexF = usdt * 0.003;
+  const g1F = usdt * 0.00005;
+  const total = lzF + dexF + g1F + 0.01;
+  const after = Math.max(0, usdt - total);
+  const pct = (total / usdt) * 100;
+  const flrAmt = after / flrPrice;
+  let out, sym;
+  
+  if(outputToken === 'sflr'){
+    out = flrAmt / sflrRatio;
+    sym = 'sFLR';
+  } else {
+    out = flrAmt;
+    sym = 'FLR';
+  }
+  const minOut = out * (1 - slippage / 100);
+  
+  document.getElementById('outAmt').textContent = out > 0 ? out.toFixed(2) : 'Too small';
+  document.getElementById('lzFee').textContent = '$' + lzF.toFixed(2);
+  document.getElementById('dexFee').textContent = '$' + dexF.toFixed(3);
+  document.getElementById('g1Fee').textContent = '$' + g1F.toFixed(4);
+  document.getElementById('totalFee').textContent = '$' + total.toFixed(2);
+  document.getElementById('feeBd').classList.add('show');
+  
+  const eff = document.getElementById('feeEff');
+  eff.className = 'fee-r';
+  if(pct > 10){ eff.classList.add('warn'); eff.innerHTML = `<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — too high</span>`; }
+  else if(pct > 5){ eff.classList.add('warn'); eff.innerHTML = `<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — borderline</span>`; }
+  else { eff.classList.add('good'); eff.innerHTML = `<span>✓ Fee impact</span><span>${pct.toFixed(1)}% — good</span>`; }
+  
+  const be = (lzF + 0.01) / (1 - 0.003 - 0.00005);
+  document.getElementById('minEntry').innerHTML = `<span>Min viable</span><span>$${be.toFixed(0)} · Recommended $${(be * 4).toFixed(0)}+</span>`;
+  
+  if(walletConnected && out > 0){
+    const nu = Math.max(0, usdtBalance - usdt);
+    const no = outputToken === 'sflr' ? sflrBalance + out : flrBalance + out;
+    document.getElementById('afterSw').innerHTML = `After swap → USDT: <strong>${nu.toFixed(2)}</strong> · ${sym}: <strong>${no.toFixed(2)}</strong> · Min: ${minOut.toFixed(2)}`;
+    document.getElementById('afterSw').classList.add('show');
+  }
+}
+
+function updateBalUsd(){
+  if(!flrPrice || !sflrRatio) return;
+  const sp = sflrRatio * flrPrice;
+  if(usdtBalance > 0) document.getElementById('usdtBalUsd').textContent = '≈ $' + usdtBalance.toFixed(2);
+  if(sflrBalance > 0) document.getElementById('sflrBalUsd').textContent = '≈ $' + (sflrBalance * sp).toFixed(2);
+  if(flrBalance > 0) document.getElementById('flrBalUsd').textContent = '≈ $' + (flrBalance * flrPrice).toFixed(2);
+}
+
+function setMax(){
+  document.getElementById('usdtInput').value = usdtBalance.toFixed(2);
+  calcOutput();
+}
+
+function setSlip(v, btn){
+  slippage = v;
+  document.querySelectorAll('.slip-b').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calcOutput();
+}
+
+function startCountdown(){
+  refreshTimer = 10;
+  clearInterval(window.ri);
+  window.ri = setInterval(() => {
+    refreshTimer--;
+    document.getElementById('countdown').textContent = refreshTimer + 's';
+    if(refreshTimer <= 0){ refreshTimer = 10; fetchRates(); }
+  }, 1000);
+}
+
+function startConfirmTimer(){
+  let t = 30;
+  document.getElementById('confWrap').classList.add('show');
+  clearInterval(confirmInterval);
+  confirmInterval = setInterval(() => {
+    t--;
+    const el = document.getElementById('confTimer');
+    el.textContent = t + 's';
+    if(t <= 10) el.className = 'conf-cd urgent';
+    if(t <= 0){
+      clearInterval(confirmInterval);
+      document.getElementById('confWrap').classList.remove('show');
+      document.getElementById('btnText').textContent = 'Quote expired — tap to refresh';
+      document.getElementById('swapBtn').onclick = () => {
+        fetchRates(); startCountdown();
+        document.getElementById('swapBtn').onclick = handleBtn;
+        document.getElementById('btnText').textContent = 'Swap';
+      };
+    }
+  }, 1000);
+}
+
+async function handleBtn(){
+  if(!walletConnected){
+    await connectWallet();
+  } else {
+    const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
+    if(usdt < 50){
+      document.getElementById('errMsg').textContent = 'Minimum swap is $50 USDT';
+      document.getElementById('errMsg').classList.add('show');
+      return;
+    }
+    if(usdt > usdtBalance && usdtBalance > 0){
+      document.getElementById('errMsg').textContent = 'Insufficient USDT balance';
+      document.getElementById('errMsg').classList.add('show');
+      return;
+    }
+    document.getElementById('errMsg').classList.remove('show');
+    startConfirmTimer();
+    document.getElementById('btnText').textContent = 'Confirm in wallet — coming soon';
+  }
+}
+
+// REAL METAMASK CONNECTION
+async function connectWallet(){
+  if(!window.ethereum){
+    document.getElementById('errMsg').textContent = 'MetaMask not detected. Install MetaMask or use a Flare-compatible wallet.';
+    document.getElementById('errMsg').classList.add('show');
+    return;
+  }
+  
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if(accounts.length === 0) return;
+    
+    const addr = accounts[0];
+    walletConnected = true;
+    
+    // Check if on Flare network (chainId 14) or Coston2 (114)
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const isFlare = chainId === '0xe' || chainId === '0x72'; // 14 or 114
+    
+    if(!isFlare){
+      // Prompt to switch to Flare
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xe' }] // Flare mainnet
+        });
+      } catch(switchErr){
+        // If Flare not added, add it
+        if(switchErr.code === 4902){
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0xe',
+              chainName: 'Flare Mainnet',
+              nativeCurrency: { name: 'Flare', symbol: 'FLR', decimals: 18 },
+              rpcUrls: ['https://flare-api.flare.network/ext/C/rpc'],
+              blockExplorerUrls: ['https://flare-explorer.flare.network']
+            }]
+          });
+        }
+      }
+    }
+    
+    // Update UI
+    document.getElementById('walletAddr').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
+    document.getElementById('balBar').classList.add('show');
+    document.getElementById('swapBtn').classList.add('connected');
+    document.getElementById('btnPulse').style.display = 'none';
+    document.getElementById('btnText').textContent = 'Swap USDT → ' + (outputToken === 'sflr' ? 'sFLR' : 'FLR');
+    document.getElementById('maxBtn').style.display = 'block';
+    document.getElementById('errMsg').classList.remove('show');
+    
+    // Fetch balances (simulated until contract integration)
+    await fetchBalances(addr);
+    
+    // Listen for account/chain changes
+    window.ethereum.on('accountsChanged', (accs) => {
+      if(accs.length === 0){ disconnectWallet(); }
+      else { connectWallet(); }
+    });
+    window.ethereum.on('chainChanged', () => { window.location.reload(); });
+    
+  } catch(err){
+    document.getElementById('errMsg').textContent = 'Connection failed: ' + err.message;
+    document.getElementById('errMsg').classList.add('show');
+  }
+}
+
+async function fetchBalances(addr){
+  // Placeholder — replace with actual contract calls when deployed
+  // For now, simulate realistic balances for demo
+  usdtBalance = 1250.50;
+  sflrBalance = 8432.17;
+  flrBalance = 15000;
+  
+  document.getElementById('usdtBal').textContent = usdtBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  document.getElementById('sflrBal').textContent = sflrBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  document.getElementById('flrBal').textContent = flrBalance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+  
+  updateBalUsd();
+  calcOutput();
+}
+
+function disconnectWallet(){
+  walletConnected = false;
+  usdtBalance = 0; sflrBalance = 0; flrBalance = 0;
+  document.getElementById('balBar').classList.remove('show');
+  document.getElementById('swapBtn').classList.remove('connected');
+  document.getElementById('btnPulse').style.display = 'inline-block';
+  document.getElementById('btnText').textContent = 'Connect Wallet to See Balances';
+  document.getElementById('maxBtn').style.display = 'none';
+  document.getElementById('afterSw').classList.remove('show');
+  calcOutput();
+}
+
+// INIT
+fetchRates();
+startCountdown();
 </script>
 </body>
 </html>
