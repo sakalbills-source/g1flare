@@ -149,7 +149,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .stake-wrap { position: relative; }
 .stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 14px 28px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .stake-btn:hover { background: #6C63FF; color: #fff; }
-.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 150; }
 .stake-wrap:hover .stake-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
 .stake-opt { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; text-decoration: none; color: var(--text); transition: all 0.15s; }
 .stake-opt:hover { background: var(--bg); }
@@ -173,7 +173,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   .swap-btn { font-size: 0.88rem; }
   .cta-wrap { flex-direction: column; align-items: stretch; }
   .stake-btn { width: 100%; justify-content: center; }
-  .stake-dropdown { bottom: auto; top: calc(100% + 8px); }
+  .stake-dropdown { bottom: auto; top: calc(100% + 8px); z-index: 150; }
   .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px 20px; gap: 4px; z-index: 100; overflow-x: auto; }
   .mn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; }
   .mn-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
