@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G1Flare — Cross-chain sFLR Onramp</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- WalletConnect v2 -->
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.0/dist/index.umd.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
@@ -51,15 +53,30 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .g1-logo { font-size: 3.2rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 12px; }
 .tagline { font-size: 1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 32px; font-weight: 700; }
 
-/* METAMASK CONNECT BAR */
-.mm-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; max-width: 460px; }
-.mm-bar.connected { background: #f0fdf4; border-color: #bbf7d0; }
-.mm-icon { width: 20px; height: 20px; }
-.mm-text { font-size: 0.75rem; color: var(--muted); }
-.mm-text strong { color: var(--text); }
-.mm-btn { margin-left: auto; font-size: 0.65rem; font-weight: 700; padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--white); color: var(--text); cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.mm-btn:hover { background: var(--pink); color: white; border-color: var(--pink); }
-.mm-btn.connected { background: #22c55e; color: white; border-color: #22c55e; }
+/* WALLET CONNECT BAR */
+.wc-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; max-width: 460px; cursor: pointer; transition: all 0.15s; }
+.wc-bar:hover { border-color: var(--pink); }
+.wc-bar.connected { background: #f0fdf4; border-color: #bbf7d0; cursor: default; }
+.wc-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.wc-text { font-size: 0.75rem; color: var(--muted); flex: 1; }
+.wc-text strong { color: var(--text); }
+.wc-btn { font-size: 0.65rem; font-weight: 700; padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--white); color: var(--text); cursor: pointer; font-family: inherit; transition: all 0.15s; flex-shrink: 0; }
+.wc-btn:hover { background: var(--pink); color: white; border-color: var(--pink); }
+.wc-btn.connected { background: #22c55e; color: white; border-color: #22c55e; }
+
+/* WALLET MODAL */
+.wc-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+.wc-modal-overlay.show { display: flex; }
+.wc-modal { background: var(--white); border-radius: 20px; padding: 24px; width: 360px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.wc-modal-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+.wc-modal-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 20px; }
+.wc-opt { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; margin-bottom: 8px; }
+.wc-opt:hover { background: var(--bg); border-color: var(--pink); }
+.wc-opt-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: contain; }
+.wc-opt-name { font-size: 0.85rem; font-weight: 700; }
+.wc-opt-sub { font-size: 0.62rem; color: var(--muted); }
+.wc-close { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
+.wc-close:hover { background: var(--border); }
 
 /* SWAP WIDGET */
 .swap-wrap { max-width: 460px; }
@@ -68,6 +85,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .live-dot { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--muted); }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 2s infinite; }
 .dot.error { background: #ef4444; animation: none; }
+.dot.stale { background: #f59e0b; animation: none; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .rate-bar { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 7px 12px; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.75rem; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .rate-bar strong { color: var(--text); }
@@ -165,7 +183,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   .mn-item img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #f0f0f0; }
   .mn-lbl { font-size: 0.58rem; font-weight: 700; white-space: nowrap; }
   .mn-soon { font-size: 0.44rem; font-weight: 700; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 1px 4px; border-radius: 4px; text-transform: uppercase; }
-  .mm-bar { max-width: 100%; }
+  .wc-bar { max-width: 100%; }
+  .wc-modal { width: 90vw; }
 }
 </style>
 </head>
@@ -235,16 +254,39 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="g1-logo">G1FLARE</div>
     <p class="tagline">The simplest onramp from USDT to sFLR on Flare Network. Three steps. No complexity.</p>
 
-    <!-- METAMASK CONNECT BAR -->
-    <div class="mm-bar" id="mmBar">
-      <svg class="mm-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 12C22 6.477 17.523 2 12 2S2 6.477 2 12s4.477 10 10 10 10-4.477 10-10z" fill="#E17726"/>
-        <path d="M12 6l-1.5 4h3L12 6z" fill="#fff"/>
-        <path d="M8 10l-2 3 4-1-2-2zM16 10l2 3-4-1 2-2z" fill="#fff"/>
-        <path d="M12 13l-3 1 1 3 2-4zM12 13l3 1-1 3-2-4z" fill="#fff"/>
+    <!-- WALLET CONNECT BAR -->
+    <div class="wc-bar" id="wcBar" onclick="!walletConnected && openWalletModal()">
+      <svg class="wc-icon" id="wcIcon" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="var(--muted)"/>
+        <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="var(--pink)"/>
       </svg>
-      <div class="mm-text" id="mmText"><strong>MetaMask</strong> not connected</div>
-      <button class="mm-btn" id="mmBtn" onclick="connectWallet()">Connect</button>
+      <div class="wc-text" id="wcText"><strong>Connect Wallet</strong> — MetaMask, Ledger, Trust, +300 more</div>
+      <button class="wc-btn" id="wcBtn" onclick="event.stopPropagation(); openWalletModal()">Connect</button>
+    </div>
+
+    <!-- WALLET MODAL -->
+    <div class="wc-modal-overlay" id="wcModal" onclick="if(event.target===this)closeWalletModal()">
+      <div class="wc-modal">
+        <div class="wc-modal-title">Connect Wallet</div>
+        <div class="wc-modal-sub">Choose your preferred wallet</div>
+        <div class="wc-opt" onclick="connectMetaMask()">
+          <img class="wc-opt-icon" src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MetaMask" onerror="this.style.background='#E17726'">
+          <div><div class="wc-opt-name">MetaMask</div><div class="wc-opt-sub">Browser extension & mobile</div></div>
+        </div>
+        <div class="wc-opt" onclick="connectWalletConnect()">
+          <img class="wc-opt-icon" src="https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/master/Icon/Blue%20(Default)/Icon.svg" alt="WalletConnect" onerror="this.style.background='#3B99FC'">
+          <div><div class="wc-opt-name">WalletConnect</div><div class="wc-opt-sub">Ledger, Trust, Rainbow, +300</div></div>
+        </div>
+        <div class="wc-opt" onclick="connectMetaMask()">
+          <img class="wc-opt-icon" src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="Trust" onerror="this.style.background='#3375BB'">
+          <div><div class="wc-opt-name">Trust Wallet</div><div class="wc-opt-sub">Mobile & browser extension</div></div>
+        </div>
+        <div class="wc-opt" onclick="connectWalletConnect()">
+          <img class="wc-opt-icon" src="https://cryptologos.cc/logos/ledger-lgr-logo.png" alt="Ledger" onerror="this.style.background='#000'">
+          <div><div class="wc-opt-name">Ledger Live</div><div class="wc-opt-sub">Hardware wallet</div></div>
+        </div>
+        <button class="wc-close" onclick="closeWalletModal()">Cancel</button>
+      </div>
     </div>
 
     <!-- SWAP WIDGET -->
@@ -325,7 +367,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       </div>
       <button class="swap-btn" id="swapBtn" onclick="handleBtn()">
         <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.8);animation:blink 2s infinite;" id="btnPulse"></span>
-        <span id="btnText">Connect MetaMask to Swap</span>
+        <span id="btnText">Connect Wallet to Swap</span>
       </button>
       <div class="lz-badge"><div class="lz-dot"></div>Powered by LayerZero USDT0 · Native USDT · No wrapped tokens</div>
       <div class="err-msg" id="errMsg"></div>
@@ -366,9 +408,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 let flrPrice=null, sflrRatio=null, slippage=3, refreshTimer=10;
 let walletConnected=false, outputToken='sflr', confirmInterval=null;
 let usdtBalance=0, sflrBalance=0, flrBalance=0, sourceChain='ethereum';
+let walletProvider=null, walletType=null;
 const CHAIN_LZ = {ethereum:2.50, solana:0.80, arbitrum:0.30, base:0.25, bnb:0.40};
 
-// CoinCap API — free, no key needed, CORS-friendly
+// WALLET MODAL
+function openWalletModal(){ document.getElementById('wcModal').classList.add('show'); }
+function closeWalletModal(){ document.getElementById('wcModal').classList.remove('show'); }
+
+// LIVE RATES — CoinCap API
 async function fetchRates(){
   try {
     const [flrRes, sflrRes] = await Promise.all([
@@ -393,11 +440,17 @@ async function fetchRates(){
       throw new Error('Invalid price data');
     }
   } catch(e) {
-    if(!flrPrice) { flrPrice = 0.006623; sflrRatio = 1.67; }
-    document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6) + '*';
-    document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4) + '*';
-    document.getElementById('liveDot').className = 'dot error';
-    document.getElementById('liveLabel').textContent = 'Cached';
+    // Stale indicator if we have cached data, error if not
+    if(flrPrice){
+      document.getElementById('liveDot').className = 'dot stale';
+      document.getElementById('liveLabel').textContent = 'Stale';
+    } else {
+      flrPrice = 0.006623; sflrRatio = 1.67;
+      document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6) + '*';
+      document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4) + '*';
+      document.getElementById('liveDot').className = 'dot error';
+      document.getElementById('liveLabel').textContent = 'Cached';
+    }
     calcOutput();
   }
 }
@@ -525,7 +578,7 @@ function startConfirmTimer(){
 
 async function handleBtn(){
   if(!walletConnected){
-    await connectWallet();
+    openWalletModal();
   } else {
     const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
     if(usdt < 50){
@@ -544,84 +597,113 @@ async function handleBtn(){
   }
 }
 
-// REAL METAMASK CONNECTION
-async function connectWallet(){
+// METAMASK DIRECT
+async function connectMetaMask(){
+  closeWalletModal();
   if(!window.ethereum){
-    document.getElementById('errMsg').textContent = 'MetaMask not detected. Install MetaMask or use a Flare-compatible wallet.';
+    document.getElementById('errMsg').textContent = 'MetaMask not detected. Install MetaMask or use WalletConnect.';
     document.getElementById('errMsg').classList.add('show');
     return;
   }
-  
   try {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     if(accounts.length === 0) return;
-    
-    const addr = accounts[0];
-    walletConnected = true;
-    
-    // Check if on Flare network (chainId 14) or Coston2 (114)
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const isFlare = chainId === '0xe' || chainId === '0x72'; // 14 or 114
-    
-    if(!isFlare){
-      // Prompt to switch to Flare
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0xe' }] // Flare mainnet
-        });
-      } catch(switchErr){
-        // If Flare not added, add it
-        if(switchErr.code === 4902){
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0xe',
-              chainName: 'Flare Mainnet',
-              nativeCurrency: { name: 'Flare', symbol: 'FLR', decimals: 18 },
-              rpcUrls: ['https://flare-api.flare.network/ext/C/rpc'],
-              blockExplorerUrls: ['https://flare-explorer.flare.network']
-            }]
-          });
-        }
-      }
-    }
-    
-    // Update MetaMask bar
-    document.getElementById('mmBar').classList.add('connected');
-    document.getElementById('mmText').innerHTML = `<strong>${addr.slice(0,6)}...${addr.slice(-4)}</strong> on Flare`;
-    document.getElementById('mmBtn').textContent = 'Disconnect';
-    document.getElementById('mmBtn').classList.add('connected');
-    document.getElementById('mmBtn').onclick = disconnectWallet;
-    
-    // Update swap UI
-    document.getElementById('walletAddr').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
-    document.getElementById('balBar').classList.add('show');
-    document.getElementById('swapBtn').classList.add('connected');
-    document.getElementById('btnPulse').style.display = 'none';
-    document.getElementById('btnText').textContent = 'Swap USDT → ' + (outputToken === 'sflr' ? 'sFLR' : 'FLR');
-    document.getElementById('maxBtn').style.display = 'block';
-    document.getElementById('errMsg').classList.remove('show');
-    
-    // Fetch balances (simulated until contract integration)
-    await fetchBalances(addr);
-    
-    // Listen for account/chain changes
-    window.ethereum.on('accountsChanged', (accs) => {
-      if(accs.length === 0){ disconnectWallet(); }
-      else { connectWallet(); }
-    });
-    window.ethereum.on('chainChanged', () => { window.location.reload(); });
-    
+    walletType = 'metamask';
+    await finalizeConnection(accounts[0], window.ethereum);
   } catch(err){
     document.getElementById('errMsg').textContent = 'Connection failed: ' + err.message;
     document.getElementById('errMsg').classList.add('show');
   }
 }
 
+// WALLETCONNECT v2
+async function connectWalletConnect(){
+  closeWalletModal();
+  try {
+    const provider = await window.EthereumProvider.init({
+      projectId: 'YOUR_PROJECT_ID', // Replace with your WalletConnect project ID from https://cloud.walletconnect.com
+      chains: [14],
+      showQrModal: true,
+      methods: ['eth_sendTransaction', 'eth_sign', 'personal_sign'],
+      events: ['chainChanged', 'accountsChanged']
+    });
+    await provider.enable();
+    const accounts = provider.accounts;
+    if(accounts.length === 0) return;
+    walletType = 'walletconnect';
+    walletProvider = provider;
+    await finalizeConnection(accounts[0], provider);
+  } catch(err){
+    document.getElementById('errMsg').textContent = 'WalletConnect failed: ' + err.message;
+    document.getElementById('errMsg').classList.add('show');
+  }
+}
+
+// FINALIZE CONNECTION
+async function finalizeConnection(addr, provider){
+  walletConnected = true;
+  
+  // Check/switch to Flare
+  const chainId = await provider.request({ method: 'eth_chainId' });
+  const isFlare = chainId === '0xe' || chainId === '0x72';
+  
+  if(!isFlare){
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0xe' }]
+      });
+    } catch(switchErr){
+      if(switchErr.code === 4902){
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0xe',
+            chainName: 'Flare Mainnet',
+            nativeCurrency: { name: 'Flare', symbol: 'FLR', decimals: 18 },
+            rpcUrls: ['https://flare-api.flare.network/ext/C/rpc'],
+            blockExplorerUrls: ['https://flare-explorer.flare.network']
+          }]
+        });
+      }
+    }
+  }
+  
+  // Update UI
+  document.getElementById('wcBar').classList.add('connected');
+  document.getElementById('wcText').innerHTML = `<strong>${addr.slice(0,6)}...${addr.slice(-4)}</strong> · ${walletType === 'metamask' ? 'MetaMask' : 'WalletConnect'}`;
+  document.getElementById('wcBtn').textContent = 'Disconnect';
+  document.getElementById('wcBtn').classList.add('connected');
+  document.getElementById('wcBtn').onclick = (e) => { e.stopPropagation(); disconnectWallet(); };
+  
+  document.getElementById('walletAddr').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
+  document.getElementById('balBar').classList.add('show');
+  document.getElementById('swapBtn').classList.add('connected');
+  document.getElementById('btnPulse').style.display = 'none';
+  document.getElementById('btnText').textContent = 'Swap USDT → ' + (outputToken === 'sflr' ? 'sFLR' : 'FLR');
+  document.getElementById('maxBtn').style.display = 'block';
+  document.getElementById('errMsg').classList.remove('show');
+  
+  await fetchBalances(addr);
+  
+  // Listeners
+  if(walletType === 'metamask' && window.ethereum){
+    window.ethereum.on('accountsChanged', (accs) => {
+      if(accs.length === 0) disconnectWallet();
+      else finalizeConnection(accs[0], window.ethereum);
+    });
+    window.ethereum.on('chainChanged', () => window.location.reload());
+  } else if(walletProvider){
+    walletProvider.on('accountsChanged', (accs) => {
+      if(accs.length === 0) disconnectWallet();
+      else finalizeConnection(accs[0], walletProvider);
+    });
+    walletProvider.on('chainChanged', () => window.location.reload());
+  }
+}
+
 async function fetchBalances(addr){
-  // Placeholder — replace with actual contract calls when deployed
-  // For now, simulate realistic balances for demo
+  // Simulated until contracts deployed
   usdtBalance = 1250.50;
   sflrBalance = 8432.17;
   flrBalance = 15000;
@@ -637,19 +719,22 @@ async function fetchBalances(addr){
 function disconnectWallet(){
   walletConnected = false;
   usdtBalance = 0; sflrBalance = 0; flrBalance = 0;
+  walletType = null;
+  if(walletProvider){
+    try { walletProvider.disconnect(); } catch(e){}
+    walletProvider = null;
+  }
   
-  // Reset MetaMask bar
-  document.getElementById('mmBar').classList.remove('connected');
-  document.getElementById('mmText').innerHTML = '<strong>MetaMask</strong> not connected';
-  document.getElementById('mmBtn').textContent = 'Connect';
-  document.getElementById('mmBtn').classList.remove('connected');
-  document.getElementById('mmBtn').onclick = connectWallet;
+  document.getElementById('wcBar').classList.remove('connected');
+  document.getElementById('wcText').innerHTML = '<strong>Connect Wallet</strong> — MetaMask, Ledger, Trust, +300 more';
+  document.getElementById('wcBtn').textContent = 'Connect';
+  document.getElementById('wcBtn').classList.remove('connected');
+  document.getElementById('wcBtn').onclick = (e) => { e.stopPropagation(); openWalletModal(); };
   
-  // Reset swap UI
   document.getElementById('balBar').classList.remove('show');
   document.getElementById('swapBtn').classList.remove('connected');
   document.getElementById('btnPulse').style.display = 'inline-block';
-  document.getElementById('btnText').textContent = 'Connect MetaMask to Swap';
+  document.getElementById('btnText').textContent = 'Connect Wallet to Swap';
   document.getElementById('maxBtn').style.display = 'none';
   document.getElementById('afterSw').classList.remove('show');
   calcOutput();
