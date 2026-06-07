@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G1Flare — Cross-chain sFLR Onramp</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- WalletConnect v2 -->
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.10.0/dist/index.umd.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
@@ -15,7 +13,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
 .top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
 .logo-badge { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
-.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
+.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; }
 .badge-name { font-size: 0.7rem; font-weight: 700; color: var(--text); line-height: 1.2; }
 .badge-sub { font-size: 0.52rem; color: var(--muted); }
 .section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
@@ -38,7 +36,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .receive-sub { font-size: 0.64rem; color: var(--muted); margin-top: 2px; }
 .firelight-box { background: #FFF8F0; border: 1px solid rgba(255,107,0,0.15); border-radius: 14px; padding: 14px; margin-top: 6px; }
 .fl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
+.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
 .fl-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
 .fl-badge { margin-left: auto; font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); }
 .fl-text { font-size: 0.72rem; color: #555; line-height: 1.65; }
@@ -72,7 +70,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .wc-modal-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 20px; }
 .wc-opt { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; margin-bottom: 8px; }
 .wc-opt:hover { background: var(--bg); border-color: var(--pink); }
-.wc-opt-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: contain; }
+.wc-opt-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: contain; flex-shrink: 0; }
 .wc-opt-name { font-size: 0.85rem; font-weight: 700; }
 .wc-opt-sub { font-size: 0.62rem; color: var(--muted); }
 .wc-close { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
@@ -193,11 +191,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <div class="sidebar">
     <div class="top-logos">
       <div class="logo-badge">
-        <img class="badge-img" src="https://assets.coingecko.com/coins/images/28624/small/FLR-icon.png" alt="Flare">
+        <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkYzQzc4IiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yNSAzNWg1MHYxMEgzNXYxMGgzNXYxMEgzNXYxNUgyNXoiLz48L3N2Zz4=" alt="Flare">
         <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
       </div>
       <div class="logo-badge">
-        <img class="badge-img" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight">
+        <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkY2QjAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyMGMtMTAgMTUtMjAgMjUtMjAgNDAgMCAxNSAxMCAyNSAyMCAyNXMyMC0xMCAyMC0yNWMwLTE1LTEwLTI1LTIwLTQweiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTUiIHI9IjgiIGZpbGw9IiNGRjZCMDAiLz48L3N2Zz4=" alt="Firelight">
         <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
       </div>
     </div>
@@ -231,13 +229,13 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="receive-box">
       <div class="receive-label">You receive</div>
       <div class="receive-row">
-        <img class="token-icon" src="https://assets.coingecko.com/coins/images/30877/small/sflr.png" alt="sFLR">
+        <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9InVybCgjZykiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Q0QUYzNyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0I4ODYwQiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjUwIiB5PSI2OCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlM8L3RleHQ+PC9zdmc+" alt="sFLR">
         <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
       </div>
     </div>
     <div class="firelight-box">
       <div class="fl-top">
-        <img class="fl-icon" src="https://pbs.twimg.com/profile_images/1880923847195557888/DKAaZRjO_400x400.jpg" alt="Firelight">
+        <img class="fl-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkY2QjAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyMGMtMTAgMTUtMjAgMjUtMjAgNDAgMCAxNSAxMCAyNSAyMCAyNXMyMC0xMCAyMC0yNWMwLTE1LTEwLTI1LTIwLTQweiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTUiIHI9IjgiIGZpbGw9IiNGRjZCMDAiLz48L3N2Zz4=" alt="Firelight">
         <div class="fl-name">Firelight</div>
         <div class="fl-badge">Composable</div>
       </div>
@@ -270,19 +268,19 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
         <div class="wc-modal-title">Connect Wallet</div>
         <div class="wc-modal-sub">Choose your preferred wallet</div>
         <div class="wc-opt" onclick="connectMetaMask()">
-          <img class="wc-opt-icon" src="https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg" alt="MetaMask" onerror="this.style.background='#E17726'">
+          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRTE3NzI2IiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zNSA2MGwzMC0zNSAzMCAzNS0xNSA1IDE1IDUtMzAgMjUtMzAtMjUgMTUtNS0xNS01eiIvPjwvc3ZnPg==" alt="MetaMask">
           <div><div class="wc-opt-name">MetaMask</div><div class="wc-opt-sub">Browser extension & mobile</div></div>
         </div>
         <div class="wc-opt" onclick="connectWalletConnect()">
-          <img class="wc-opt-icon" src="https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/master/Icon/Blue%20(Default)/Icon.svg" alt="WalletConnect" onerror="this.style.background='#3B99FC'">
+          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjM0I5OUZDIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zMCA0MGg0MHYyMEgzMHoiLz48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTQwIDMwaDIwdjQwSDQweiIvPjwvc3ZnPg==" alt="WalletConnect">
           <div><div class="wc-opt-name">WalletConnect</div><div class="wc-opt-sub">Ledger, Trust, Rainbow, +300</div></div>
         </div>
         <div class="wc-opt" onclick="connectMetaMask()">
-          <img class="wc-opt-icon" src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="Trust" onerror="this.style.background='#3375BB'">
+          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjMzM3NUJCIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyNWMxNSAwIDI1IDEwIDI1IDI1cy0xMCAyNS0yNSAyNS0yNS0xMC0yNS0yNSAxMC0yNSAyNS0yNXptMCA4Yy0xMCAwLTE1IDUtMTUgMTVzNSAxNSAxNSAxNSAxNS01IDE1LTE1LTUtMTUtMTUtMTV6Ii8+PC9zdmc+" alt="Trust">
           <div><div class="wc-opt-name">Trust Wallet</div><div class="wc-opt-sub">Mobile & browser extension</div></div>
         </div>
         <div class="wc-opt" onclick="connectWalletConnect()">
-          <img class="wc-opt-icon" src="https://cryptologos.cc/logos/ledger-lgr-logo.png" alt="Ledger" onerror="this.style.background='#000'">
+          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjMDAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zNSAzMGgzMHY1SDM1eiIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNNDAgNDBoMjB2NUg0MHoiLz48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTMwIDUwaDQwdjVIMzB6Ii8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik00MCA2MGgyMHY1SDQweiIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMzUgNzBoMzB2NUgzNXoiLz48L3N2Zz4=" alt="Ledger">
           <div><div class="wc-opt-name">Ledger Live</div><div class="wc-opt-sub">Hardware wallet</div></div>
         </div>
         <button class="wc-close" onclick="closeWalletModal()">Cancel</button>
@@ -411,11 +409,9 @@ let usdtBalance=0, sflrBalance=0, flrBalance=0, sourceChain='ethereum';
 let walletProvider=null, walletType=null;
 const CHAIN_LZ = {ethereum:2.50, solana:0.80, arbitrum:0.30, base:0.25, bnb:0.40};
 
-// WALLET MODAL
 function openWalletModal(){ document.getElementById('wcModal').classList.add('show'); }
 function closeWalletModal(){ document.getElementById('wcModal').classList.remove('show'); }
 
-// LIVE RATES — CoinCap API
 async function fetchRates(){
   try {
     const [flrRes, sflrRes] = await Promise.all([
@@ -440,7 +436,6 @@ async function fetchRates(){
       throw new Error('Invalid price data');
     }
   } catch(e) {
-    // Stale indicator if we have cached data, error if not
     if(flrPrice){
       document.getElementById('liveDot').className = 'dot stale';
       document.getElementById('liveLabel').textContent = 'Stale';
@@ -597,7 +592,6 @@ async function handleBtn(){
   }
 }
 
-// METAMASK DIRECT
 async function connectMetaMask(){
   closeWalletModal();
   if(!window.ethereum){
@@ -616,12 +610,11 @@ async function connectMetaMask(){
   }
 }
 
-// WALLETCONNECT v2
 async function connectWalletConnect(){
   closeWalletModal();
   try {
     const provider = await window.EthereumProvider.init({
-      projectId: 'YOUR_PROJECT_ID', // Replace with your WalletConnect project ID from https://cloud.walletconnect.com
+      projectId: 'bdcdc7d12ba6fb8e2db5f4e87781ab7c',
       chains: [14],
       showQrModal: true,
       methods: ['eth_sendTransaction', 'eth_sign', 'personal_sign'],
@@ -639,11 +632,9 @@ async function connectWalletConnect(){
   }
 }
 
-// FINALIZE CONNECTION
 async function finalizeConnection(addr, provider){
   walletConnected = true;
   
-  // Check/switch to Flare
   const chainId = await provider.request({ method: 'eth_chainId' });
   const isFlare = chainId === '0xe' || chainId === '0x72';
   
@@ -669,7 +660,6 @@ async function finalizeConnection(addr, provider){
     }
   }
   
-  // Update UI
   document.getElementById('wcBar').classList.add('connected');
   document.getElementById('wcText').innerHTML = `<strong>${addr.slice(0,6)}...${addr.slice(-4)}</strong> · ${walletType === 'metamask' ? 'MetaMask' : 'WalletConnect'}`;
   document.getElementById('wcBtn').textContent = 'Disconnect';
@@ -686,7 +676,6 @@ async function finalizeConnection(addr, provider){
   
   await fetchBalances(addr);
   
-  // Listeners
   if(walletType === 'metamask' && window.ethereum){
     window.ethereum.on('accountsChanged', (accs) => {
       if(accs.length === 0) disconnectWallet();
@@ -703,7 +692,6 @@ async function finalizeConnection(addr, provider){
 }
 
 async function fetchBalances(addr){
-  // Simulated until contracts deployed
   usdtBalance = 1250.50;
   sflrBalance = 8432.17;
   flrBalance = 15000;
@@ -740,7 +728,6 @@ function disconnectWallet(){
   calcOutput();
 }
 
-// INIT
 fetchRates();
 startCountdown();
 </script>
