@@ -103,7 +103,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .tok-input { display: flex; align-items: center; gap: 8px; }
 .tok-badge { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px 4px 6px; white-space: nowrap; }
 .tok-circle { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.4rem; font-weight: 800; color: white; }
-.u-c { background: #26A17B; } .s-c { background: #FF3C78; } .f-c { background: #E8473F; }
+.u-c { background: #26A17B; } .s-c { background: #D8A535; } .f-c { background: #E8473F; }
 .tok-lbl { font-size: 0.78rem; font-weight: 700; color: var(--text); }
 .amt-input { flex: 1; font-size: 1.2rem; font-weight: 700; color: var(--text); background: transparent; border: none; outline: none; text-align: right; font-family: inherit; min-width: 0; }
 .chain-sel { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
@@ -149,7 +149,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .stake-wrap { position: relative; }
 .stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 14px 28px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .stake-btn:hover { background: #6C63FF; color: #fff; }
-.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 150; }
+.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 .stake-wrap:hover .stake-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
 .stake-opt { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; text-decoration: none; color: var(--text); transition: all 0.15s; }
 .stake-opt:hover { background: var(--bg); }
@@ -173,7 +173,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   .swap-btn { font-size: 0.88rem; }
   .cta-wrap { flex-direction: column; align-items: stretch; }
   .stake-btn { width: 100%; justify-content: center; }
-  .stake-dropdown { bottom: auto; top: calc(100% + 8px); z-index: 150; }
+  .stake-dropdown { bottom: auto; top: calc(100% + 8px); }
   .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px 20px; gap: 4px; z-index: 100; overflow-x: auto; }
   .mn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; }
   .mn-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
@@ -191,14 +191,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 <div class="layout">
   <div class="sidebar">
     <div class="top-logos">
-      <div class="logo-badge">
+      <a class="logo-badge" href="https://flare.network" target="_blank" style="text-decoration:none;color:inherit;">
         <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkYzQzc4IiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yNSAzNWg1MHYxMEgzNXYxMGgzNXYxMEgzNXYxNUgyNXoiLz48L3N2Zz4=" alt="Flare">
         <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
-      </div>
-      <div class="logo-badge">
+      </a>
+      <a class="logo-badge" href="https://firelight.finance" target="_blank" style="text-decoration:none;color:inherit;">
         <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkY2QjAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyMGMtMTAgMTUtMjAgMjUtMjAgNDAgMCAxNSAxMCAyNSAyMCAyNXMyMC0xMCAyMC0yNWMwLTE1LTEwLTI1LTIwLTQweiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTUiIHI9IjgiIGZpbGw9IiNGRjZCMDAiLz48L3N2Zz4=" alt="Firelight">
         <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
-      </div>
+      </a>
     </div>
     <div class="section-label">Convert from</div>
     <a class="token-row active" href="#">
@@ -230,7 +230,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="receive-box">
       <div class="receive-label">You receive</div>
       <div class="receive-row">
-        <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9InVybCgjZykiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Q0QUYzNyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0I4ODYwQiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjx0ZXh0IHg9IjUwIiB5PSI2OCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlM8L3RleHQ+PC9zdmc+" alt="sFLR">
+        <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiNEOEE1MzUiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI2OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlM8L3RleHQ+PC9zdmc+" alt="sFLR">
         <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
       </div>
     </div>
@@ -347,7 +347,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
           <div class="fee-r"><span>LayerZero bridge (USDT0)</span><span id="lzFee">—</span></div>
           <div class="fee-r"><span>SparkDEX swap (0.3%)</span><span id="dexFee">—</span></div>
           <div class="fee-r"><span>Sceptre stake</span><span>~$0.01</span></div>
-          <div class="fee-r"><span>G1Flare (0.005%)</span><span id="g1Fee">—</span></div>
+          <div class="fee-r"><span>G1Flare (0.05%)</span><span id="g1Fee">—</span></div>
           <div class="fee-r total"><span>Total fees</span><span id="totalFee">—</span></div>
           <div class="fee-r" id="feeEff"></div>
           <div class="fee-r" id="minEntry"></div>
@@ -391,7 +391,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
         </div>
       </div>
     </div>
-    <div class="meta">0.005% fee · Non-custodial · Permissionless · Built on Flare</div>
+    <div class="meta">0.05% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
 </div>
 
@@ -480,7 +480,7 @@ function calcOutput(){
 
   const lzF = CHAIN_LZ[sourceChain] || 1;
   const dexF = usdt * 0.003;
-  const g1F = usdt * 0.00005;
+  const g1F = usdt * 0.0005;
   const total = lzF + dexF + g1F + 0.01;
   const after = Math.max(0, usdt - total);
   const pct = (total / usdt) * 100;
@@ -509,7 +509,7 @@ function calcOutput(){
   else if(pct > 5){ eff.classList.add('warn'); eff.innerHTML = `<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — borderline</span>`; }
   else { eff.classList.add('good'); eff.innerHTML = `<span>✓ Fee impact</span><span>${pct.toFixed(1)}% — good</span>`; }
 
-  const be = (lzF + 0.01) / (1 - 0.003 - 0.00005);
+  const be = (lzF + 0.01) / (1 - 0.003 - 0.0005);
   document.getElementById('minEntry').innerHTML = `<span>Min viable</span><span>$${be.toFixed(0)} · Recommended $${(be * 4).toFixed(0)}+</span>`;
 
   if(walletConnected && out > 0){
