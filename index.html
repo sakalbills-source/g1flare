@@ -37,10 +37,96 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--gray-50);
+  background:
+    radial-gradient(1100px 750px at 15% 20%, rgba(230,32,88,0.20) 0%, transparent 60%),
+    radial-gradient(1000px 700px at 85% 80%, rgba(230,32,88,0.14) 0%, transparent 60%),
+    #0a0a0c;
+  background-attachment: fixed;
   color: var(--gray-800);
   line-height: 1.5;
   min-height: 100vh;
+}
+/* Sections sitting directly on the black canvas — text must be pure white */
+.hiw-section h3 { color: #ffffff; }
+.hiw-section .step-title { color: #ffffff; }
+.hiw-section .step-desc { color: #ffffff; }
+.hiw-section .step-num { color: #ffffff; }
+.hiw-section .hiw-note { color: #ffffff; }
+.site-footer { color: #ffffff; border-top-color: rgba(255,255,255,0.25); }
+.site-footer a { color: #ffffff; }
+.site-footer a:hover { color: var(--primary); }
+.site-footer p { color: #ffffff; }
+/* Flarescan live-verification pill — pink box, white caps, heartbeat pulse */
+.flarescan-pill {
+  display: inline-block;
+  background: var(--primary);
+  color: #ffffff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 0 0 0 rgba(230,32,88,0.6);
+  animation: heartbeat 1.6s ease-in-out infinite;
+  transition: transform 0.15s;
+}
+.flarescan-pill:hover { transform: scale(1.05); color: #ffffff !important; }
+/* FAQ pill — same beating pink style */
+.faq-pill {
+  display: inline-block;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  padding: 8px 22px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(230,32,88,0.6);
+  animation: heartbeat 1.6s ease-in-out infinite;
+  transition: transform 0.15s;
+  font-family: inherit;
+}
+.faq-pill:hover { transform: scale(1.05); }
+/* FAQ modal */
+.faq-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.faq-overlay.open { display: flex; }
+.faq-modal {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 560px; width: 100%;
+  max-height: 85vh; overflow-y: auto;
+  padding: 28px 28px 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position: relative;
+}
+.faq-modal h2 { margin: 0 0 4px; font-size: 22px; color: var(--gray-800); }
+.faq-modal .faq-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; font-size: 26px; line-height: 1;
+  color: var(--gray-400); cursor: pointer;
+}
+.faq-modal .faq-close:hover { color: var(--primary); }
+.faq-item { border-top: 1px solid var(--gray-200); padding: 16px 0; }
+.faq-item:first-of-type { border-top: none; margin-top: 8px; }
+.faq-q { font-weight: 700; color: var(--gray-800); margin-bottom: 6px; font-size: 15px; }
+.faq-a { color: var(--gray-600); font-size: 14px; line-height: 1.55; }
+@keyframes heartbeat {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(230,32,88,0.55); }
+  14%  { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(230,32,88,0.25); }
+  28%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(230,32,88,0); }
+  42%  { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(230,32,88,0.18); }
+  70%  { transform: scale(1);    box-shadow: 0 0 0 0 rgba(230,32,88,0); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(230,32,88,0); }
 }
 .hero-band {
   background: var(--dark);
@@ -435,10 +521,11 @@ body {
           <div class="step-desc">Staked Flare arrives in your wallet, earning from the first block. Firelight-ready collateral (Phase 2 July 2026).</div>
         </div>
       </div>
-      <div class="hiw-note">Contracts hold nothing between transactions — verified live on <a href="https://flarescan.com/address/0x9f17a5d7CD90181a34A2011e900B440D71E2C011" target="_blank" rel="noopener">Flarescan</a>.</div>
+      <div class="hiw-note">Contracts hold nothing between transactions — verified live on <a class="flarescan-pill" href="https://flarescan.com/address/0x9f17a5d7CD90181a34A2011e900B440D71E2C011" target="_blank" rel="noopener">FLARESCAN</a>.</div>
     </div>
 
     <footer class="site-footer">
+      <div style="margin-bottom:16px;"><button class="faq-pill" onclick="openFaq()">FAQ</button></div>
       <div class="footer-links">
         <a href="https://flare.network" target="_blank" rel="noopener">Flare Network</a>
         <a href="https://docs.sparkdex.ai" target="_blank" rel="noopener">SparkDEX</a>
@@ -956,6 +1043,41 @@ function showResult(msg, type) {
 }
 
 init().catch(console.error);
+</script>
+<div class="faq-overlay" id="faqOverlay" onclick="if(event.target===this)closeFaq()">
+  <div class="faq-modal">
+    <button class="faq-close" onclick="closeFaq()" aria-label="Close">&times;</button>
+    <h2>FAQ</h2>
+    <div class="faq-item">
+      <div class="faq-q">What does G1Flare do?</div>
+      <div class="faq-a">It converts USDT (USDT0 on Flare) into sFLR — staked Flare — in a single atomic transaction. Your USDT swaps to WFLR on SparkDEX and is staked via Sceptre, with sFLR delivered straight to your wallet.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is it custodial? Do you hold my funds?</div>
+      <div class="faq-a">No. The contract holds nothing between transactions. Each swap settles fully or reverts fully — your funds are never parked or left at rest in the contract.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why sFLR instead of FLR?</div>
+      <div class="faq-a">sFLR earns Sceptre staking rewards from the moment it lands, and is collateral-grade for Firelight (Phase 2, July 2026). G1Flare mints it at the staking rate, so you skip the slippage of buying sFLR from a liquidity pool.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's the fee?</div>
+      <div class="faq-a">0.05% flat, taken in USDT before the swap. No hidden spread.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I get plain FLR instead?</div>
+      <div class="faq-a">G1Flare delivers sFLR, which is liquid immediately — you can hold, sell, or LP it right away while it earns staking rewards. If you specifically want unstaked FLR, you can convert sFLR&rarr;FLR via Sceptre (about a 14.5-day unstaking cooldown), or buy FLR directly on SparkDEX.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I know it's real?</div>
+      <div class="faq-a">Every contract is verified live on Flarescan — the FLARESCAN link above goes straight to it. The proof is on-chain, not on this page.</div>
+    </div>
+  </div>
+</div>
+<script>
+function openFaq(){ document.getElementById('faqOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeFaq(){ document.getElementById('faqOverlay').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeFaq(); });
 </script>
 </body>
 </html>
