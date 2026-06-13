@@ -235,6 +235,8 @@ body {
 .quote-row .quote-label { font-size: 13px; color: var(--gray-600); }
 .quote-row .quote-value { font-size: 14px; font-weight: 600; color: var(--gray-800); font-family: 'SF Mono', Monaco, monospace; }
 .quote-row .quote-value.muted { color: var(--gray-400); }
+@keyframes priceFlash { 0% { background: rgba(34,197,94,0.18); } 100% { background: transparent; } }
+.quote-value.flash { animation: priceFlash 0.6s ease-out; border-radius: 4px; }
 .quote-row .quote-value.primary { color: var(--primary); font-size: 18px; }
 .sflr-rate { font-size: 12px; color: var(--gray-500); margin-top: 8px; font-style: italic; }
 .sflr-rate.hidden { display: none; }
@@ -464,6 +466,10 @@ body {
           <span class="quote-value muted" id="quoteOut">—</span>
         </div>
         <div class="quote-row">
+          <span class="quote-label">FLR price</span>
+          <span class="quote-value muted" id="quoteFlrUsd">—</span>
+        </div>
+        <div class="quote-row">
           <span class="quote-label">Rate</span>
           <span class="quote-value muted" id="quoteRate">—</span>
         </div>
@@ -597,6 +603,7 @@ const els = {
   amountInput: document.getElementById('amountInput'),
   quoteOut: document.getElementById('quoteOut'),
   quoteRate: document.getElementById('quoteRate'),
+  quoteFlrUsd: document.getElementById('quoteFlrUsd'),
   quoteFee: document.getElementById('quoteFee'),
   quoteNet: document.getElementById('quoteNet'),
   sflrRate: document.getElementById('sflrRate'),
@@ -706,10 +713,25 @@ async function quoteRateOnly() {
   }
 }
 
+function setFlrUsdPrice(flrPerUsdt) {
+  if (!flrPerUsdt || flrPerUsdt <= 0) return;
+  const usdPerFlr = 1 / flrPerUsdt;
+  const text = '1 FLR ≈ $' + usdPerFlr.toPrecision(4);
+  const el = els.quoteFlrUsd;
+  if (el.textContent !== text) {
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+  el.textContent = text;
+  el.classList.remove('muted');
+}
+
 function updateRateOnlyDisplay() {
   if (!currentQuote) return;
-  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(2)} FLR`;
   els.quoteRate.classList.remove('muted');
+  setFlrUsdPrice(currentQuote.rate);
   if (currentQuote.sflrRateText) {
     els.sflrRate.textContent = currentQuote.sflrRateText;
     els.sflrRate.classList.remove('hidden');
@@ -814,8 +836,9 @@ function updateQuoteDisplay() {
   els.quoteOut.classList.remove('muted');
   els.quoteOut.classList.add('primary');
 
-  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(2)} FLR`;
   els.quoteRate.classList.remove('muted');
+  setFlrUsdPrice(currentQuote.rate);
 
   els.quoteFee.textContent = `${parseFloat(feeFormatted).toFixed(4)} USDT`;
   els.quoteFee.classList.remove('muted');
@@ -846,6 +869,8 @@ function clearQuoteDisplay() {
   els.quoteOut.classList.remove('primary');
   els.quoteRate.textContent = '—';
   els.quoteRate.classList.add('muted');
+  els.quoteFlrUsd.textContent = '—';
+  els.quoteFlrUsd.classList.add('muted');
   els.quoteFee.textContent = '—';
   els.quoteFee.classList.add('muted');
   els.quoteNet.textContent = '—';
