@@ -1166,8 +1166,8 @@ function setButtonState(state) {
     idle: { text: 'Swap', disabled: !userAddress || !els.amountInput.value || parseFloat(els.amountInput.value) < MIN_AMOUNT },
     quoting: { text: '<span class="spinner"></span> Quoting…', disabled: true },
     checking: { text: '<span class="spinner"></span> Checking…', disabled: true },
-    approving: { text: '<span class="spinner"></span> Approving…', disabled: true },
-    swapping: { text: '<span class="spinner"></span> Swapping…', disabled: true },
+    approving: { text: (connectedWalletInfo && connectedWalletInfo.name === 'WalletConnect') ? '<span class="spinner"></span> Check your wallet app to approve…' : '<span class="spinner"></span> Approving…', disabled: true },
+    swapping: { text: (connectedWalletInfo && connectedWalletInfo.name === 'WalletConnect') ? '<span class="spinner"></span> Check your wallet app to confirm…' : '<span class="spinner"></span> Swapping…', disabled: true },
     success: { text: '✓ Success!', disabled: true }
   };
 
