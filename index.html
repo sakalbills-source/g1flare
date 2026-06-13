@@ -3,734 +3,944 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>G1Flare — Cross-chain sFLR Onramp</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>G1Flare — USDT to sFLR on Flare Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js"></script>
 <style>
+:root {
+  --primary: #E62058;
+  --primary-dark: #C71585;
+  --dark: #1A1A2E;
+  --dark-lighter: #252540;
+  --white: #FFFFFF;
+  --gray-50: #F8F9FA;
+  --gray-100: #F1F3F5;
+  --gray-200: #E9ECEF;
+  --gray-300: #DEE2E6;
+  --gray-400: #ADB5BD;
+  --gray-500: #868E96;
+  --gray-600: #495057;
+  --gray-700: #343A40;
+  --gray-800: #212529;
+  --success: #40C057;
+  --warning: #FAB005;
+  --error: #FA5252;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-xl: 0 12px 40px rgba(0,0,0,0.15);
+}
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --pink: #FF3C78; --pink-dark: #E02E65; --orange: #FF6B00; --bg: #F8F7F4; --white: #FFFFFF; --border: #EBEBEB; --text: #1A1A1A; --muted: #888; }
-body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; }
-.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
-.sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 28px 18px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
-.top-logos { display: flex; gap: 8px; margin-bottom: 24px; }
-.logo-badge { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
-.badge-img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; flex-shrink: 0; }
-.badge-name { font-size: 0.7rem; font-weight: 700; color: var(--text); line-height: 1.2; }
-.badge-sub { font-size: 0.52rem; color: var(--muted); }
-.section-label { font-size: 0.58rem; color: var(--muted); letter-spacing: 2.5px; text-transform: uppercase; padding: 4px 10px 2px; margin-top: 4px; }
-.token-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid transparent; text-decoration: none; color: var(--text); transition: all 0.2s; cursor: pointer; }
-.token-row:hover { background: var(--bg); border-color: var(--border); }
-.token-row.active { background: #FFF0F4; border-color: rgba(255,60,120,0.25); }
-.token-row.disabled { opacity: 0.35; pointer-events: none; }
-.token-icon { width: 34px; height: 34px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #f0f0f0; }
-.token-info { flex: 1; }
-.token-name { font-size: 0.88rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
-.token-sub { font-size: 0.66rem; color: var(--muted); }
-.token-arrow { color: #ccc; font-size: 1rem; transition: color 0.2s; }
-.token-row.active .token-arrow { color: var(--pink); }
-.soon-pill { font-size: 0.52rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 3px 8px; border-radius: 8px; }
-.divider { height: 1px; background: var(--border); margin: 8px 0; }
-.receive-box { background: #FFF0F4; border: 1px solid rgba(255,60,120,0.2); border-radius: 14px; padding: 14px; margin-top: 4px; }
-.receive-label { font-size: 0.58rem; color: var(--pink); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
-.receive-row { display: flex; align-items: center; gap: 10px; }
-.receive-name { font-size: 0.9rem; font-weight: 700; color: var(--text); }
-.receive-sub { font-size: 0.64rem; color: var(--muted); margin-top: 2px; }
-.firelight-box { background: #FFF8F0; border: 1px solid rgba(255,107,0,0.15); border-radius: 14px; padding: 14px; margin-top: 6px; }
-.fl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.fl-icon { width: 24px; height: 24px; border-radius: 8px; object-fit: contain; flex-shrink: 0; }
-.fl-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
-.fl-badge { margin-left: auto; font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); }
-.fl-text { font-size: 0.72rem; color: #555; line-height: 1.65; }
-.fl-text strong { color: var(--orange); font-weight: 700; }
-.spectra-link { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--border); text-decoration: none; color: var(--text); transition: all 0.2s; margin-top: 4px; background: var(--white); }
-.spectra-link:hover { border-color: rgba(108,99,255,0.3); background: #F5F4FF; }
-.spectra-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #6C63FF, #A78BFA); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 800; color: white; flex-shrink: 0; }
-.spectra-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
-.spectra-sub { font-size: 0.62rem; color: var(--muted); }
-.spectra-arrow { color: #ccc; font-size: 0.9rem; margin-left: auto; }
-.main { padding: 40px 48px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
-.g1-logo { font-size: 3.2rem; font-weight: 800; color: var(--pink); letter-spacing: -2px; line-height: 1; margin-bottom: 12px; }
-.tagline { font-size: 1rem; color: var(--text); line-height: 1.8; max-width: 480px; margin-bottom: 32px; font-weight: 700; }
-
-/* WALLET CONNECT BAR */
-.wc-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 10px 14px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; max-width: 460px; cursor: pointer; transition: all 0.15s; }
-.wc-bar:hover { border-color: var(--pink); }
-.wc-bar.connected { background: #f0fdf4; border-color: #bbf7d0; cursor: default; }
-.wc-icon { width: 20px; height: 20px; flex-shrink: 0; }
-.wc-text { font-size: 0.75rem; color: var(--muted); flex: 1; }
-.wc-text strong { color: var(--text); }
-.wc-btn { font-size: 0.65rem; font-weight: 700; padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--white); color: var(--text); cursor: pointer; font-family: inherit; transition: all 0.15s; flex-shrink: 0; }
-.wc-btn:hover { background: var(--pink); color: white; border-color: var(--pink); }
-.wc-btn.connected { background: #22c55e; color: white; border-color: #22c55e; }
-
-/* WALLET MODAL */
-.wc-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
-.wc-modal-overlay.show { display: flex; }
-.wc-modal { background: var(--white); border-radius: 20px; padding: 24px; width: 360px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-.wc-modal-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
-.wc-modal-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 20px; }
-.wc-opt { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; margin-bottom: 8px; }
-.wc-opt:hover { background: var(--bg); border-color: var(--pink); }
-.wc-opt-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: contain; flex-shrink: 0; }
-.wc-opt-name { font-size: 0.85rem; font-weight: 700; }
-.wc-opt-sub { font-size: 0.62rem; color: var(--muted); }
-.wc-close { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 8px; font-size: 0.8rem; }
-.wc-close:hover { background: var(--border); }
-
-/* SWAP WIDGET */
-.swap-wrap { max-width: 460px; }
-.swap-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-.swap-title { font-size: 0.8rem; font-weight: 700; color: var(--text); }
-.live-dot { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--muted); }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 2s infinite; }
-.dot.error { background: #ef4444; animation: none; }
-.dot.stale { background: #f59e0b; animation: none; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.rate-bar { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 7px 12px; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.75rem; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.rate-bar strong { color: var(--text); }
-.refresh-t { margin-left: auto; font-size: 0.6rem; }
-.bal-bar { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 0.75rem; }
-.bal-bar.show { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.bal-item { display: flex; flex-direction: column; gap: 1px; }
-.bal-label { font-size: 0.52rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
-.bal-amt { font-size: 0.82rem; font-weight: 700; color: var(--text); }
-.bal-usd { font-size: 0.58rem; color: var(--muted); }
-.bal-div { width: 1px; height: 24px; background: var(--border); }
-.bal-addr { margin-left: auto; font-size: 0.6rem; color: var(--muted); font-family: monospace; }
-.scard { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; margin-bottom: 6px; }
-.scard-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.scard-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-.max-b { font-size: 0.58rem; font-weight: 700; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.2); border-radius: 6px; padding: 2px 7px; cursor: pointer; display: none; }
-.tok-input { display: flex; align-items: center; gap: 8px; }
-.tok-badge { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px 4px 6px; white-space: nowrap; }
-.tok-circle { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.4rem; font-weight: 800; color: white; }
-.u-c { background: #26A17B; } .s-c { background: #D8A535; } .f-c { background: #E8473F; }
-.tok-lbl { font-size: 0.78rem; font-weight: 700; color: var(--text); }
-.amt-input { flex: 1; font-size: 1.2rem; font-weight: 700; color: var(--text); background: transparent; border: none; outline: none; text-align: right; font-family: inherit; min-width: 0; }
-.chain-sel { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
-.chain-b { font-size: 0.58rem; font-weight: 700; padding: 3px 8px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.chain-b.active { background: #1a1a2e; color: #fff; border-color: #6C63FF; }
-.arrow-r { text-align: center; color: var(--pink); font-size: 0.78rem; margin: 2px 0; }
-.out-sel { display: flex; gap: 6px; margin-bottom: 10px; }
-.out-b { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 8px; border-radius: 10px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.out-b.active { border-color: var(--pink); background: #FFF0F4; }
-.out-b-lbl { font-size: 0.75rem; font-weight: 700; color: var(--text); }
-.out-b-sub { font-size: 0.56rem; color: var(--muted); }
-.out-b.active .out-b-lbl { color: var(--pink); }
-.rec-pill { font-size: 0.48rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 2px 5px; border-radius: 5px; }
-.out-row { display: flex; align-items: center; justify-content: space-between; }
-.out-amt { font-size: 1.2rem; font-weight: 700; color: var(--pink); }
-.fee-bd { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: none; }
-.fee-bd.show { display: block; }
-.fee-r { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--muted); padding: 2px 0; }
-.fee-r.total { font-weight: 700; color: var(--text); border-top: 1px solid var(--border); margin-top: 3px; padding-top: 5px; }
-.fee-r.warn { color: #f59e0b; } .fee-r.good { color: #22c55e; }
-.after-sw { display: none; font-size: 0.65rem; color: var(--muted); margin-top: 5px; }
-.after-sw.show { display: block; }
-.after-sw strong { color: #22c55e; }
-.slip-row { display: flex; align-items: center; gap: 5px; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
-.slip-lbl { font-size: 0.65rem; color: var(--muted); margin-right: 2px; }
-.slip-b { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.slip-b.active { background: var(--pink); color: white; border-color: var(--pink); }
-.conf-wrap { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 6px; }
-.conf-wrap.show { display: block; }
-.conf-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; }
-.conf-cd { font-weight: 700; color: var(--pink); }
-.conf-cd.urgent { color: #ef4444; }
-.swap-btn { width: 100%; padding: 14px; border-radius: 100px; border: none; background: var(--pink); color: white; font-size: 0.92rem; font-weight: 800; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.swap-btn:hover { background: var(--pink-dark); transform: translateY(-1px); }
-.swap-btn.connected { background: #111; }
-.lz-badge { display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 6px; font-size: 0.6rem; color: var(--muted); }
-.lz-dot { width: 5px; height: 5px; border-radius: 50%; background: #6C63FF; }
-.err-msg { font-size: 0.68rem; color: #ef4444; text-align: center; margin-top: 5px; display: none; }
-.err-msg.show { display: block; }
-
-/* STAKE DROPDOWN */
-.cta-wrap { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-.stake-wrap { position: relative; }
-.stake-btn { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #6C63FF; border: 1.5px solid #6C63FF; padding: 14px 28px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-.stake-btn:hover { background: #6C63FF; color: #fff; }
-.stake-dropdown { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 6px; min-width: 180px; opacity: 0; pointer-events: none; transform: translateY(6px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-.stake-wrap:hover .stake-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
-.stake-opt { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; text-decoration: none; color: var(--text); transition: all 0.15s; }
-.stake-opt:hover { background: var(--bg); }
-.stake-opt-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.48rem; font-weight: 800; color: white; flex-shrink: 0; }
-.sp-c { background: linear-gradient(135deg, #6C63FF, #A78BFA); }
-.sd-c { background: linear-gradient(135deg, #FF6B00, #FFB347); }
-.fl-c { background: linear-gradient(135deg, #FF3C78, #FF8FB5); }
-.stake-opt-name { font-size: 0.8rem; font-weight: 700; }
-.stake-opt-sub { font-size: 0.58rem; color: var(--muted); }
-.meta { margin-top: 12px; font-size: 0.68rem; color: #bbb; }
-
-/* MOBILE */
-.mobile-nav { display: none; }
-@media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .main { padding: 24px 16px 120px; min-height: auto; justify-content: flex-start; }
-  .g1-logo { font-size: 2.4rem; }
-  .tagline { font-size: 0.88rem; margin-bottom: 24px; }
-  .swap-wrap { max-width: 100%; }
-  .swap-btn { font-size: 0.88rem; }
-  .cta-wrap { flex-direction: column; align-items: stretch; }
-  .stake-btn { width: 100%; justify-content: center; }
-  .stake-dropdown { bottom: auto; top: calc(100% + 8px); }
-  .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); padding: 10px 14px 20px; gap: 4px; z-index: 100; overflow-x: auto; }
-  .mn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; border-radius: 10px; border: 1px solid transparent; text-decoration: none; color: var(--text); flex-shrink: 0; }
-  .mn-item.active { background: #FFF0F4; border-color: rgba(255,60,120,0.2); }
-  .mn-item.disabled { opacity: 0.35; pointer-events: none; }
-  .mn-item img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; background: #f0f0f0; }
-  .mn-lbl { font-size: 0.58rem; font-weight: 700; white-space: nowrap; }
-  .mn-soon { font-size: 0.44rem; font-weight: 700; color: var(--pink); background: rgba(255,60,120,0.08); border: 1px solid rgba(255,60,120,0.15); padding: 1px 4px; border-radius: 4px; text-transform: uppercase; }
-  .wc-bar { max-width: 100%; }
-  .wc-modal { width: 90vw; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-800);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.hero-band {
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+  padding: 72px 24px 64px;
+  text-align: center;
+}
+.hero-band::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(230,32,88,0.35) 0%, rgba(230,32,88,0.1) 40%, transparent 70%);
+  pointer-events: none;
+}
+.hero-band::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(230,32,88,0.3) 50%, transparent 100%);
+}
+.hero-band-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.hero-wordmark { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; }
+.hero-wordmark .g1 { color: var(--white); }
+.hero-wordmark .flare { color: var(--primary); }
+.hero-headline { font-size: 24px; font-weight: 600; color: var(--white); line-height: 1.4; margin-bottom: 12px; letter-spacing: -0.3px; }
+.hero-subline { font-size: 15px; color: rgba(255,255,255,0.65); font-weight: 400; line-height: 1.6; max-width: 560px; margin: 0 auto 28px; }
+.hero-trust { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+.hero-trust .trust-sep { margin: 0 12px; opacity: 0.4; }
+.routes-strip {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  padding: 20px 24px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+}
+.route-item { display: flex; align-items: center; gap: 10px; }
+.route-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--gray-100); }
+.route-item .route-name { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+.route-item .route-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
+.route-item .route-pill.live { background: var(--primary); color: white; }
+.route-item .route-pill.soon { background: var(--gray-100); color: var(--gray-500); }
+.app-body { display: flex; max-width: 1200px; margin: 0 auto; padding: 32px 24px; gap: 32px; justify-content: center; }
+.left-column { width: 280px; flex-shrink: 0; }
+.center-column { flex: 1; max-width: 560px; display: flex; flex-direction: column; align-items: center; }
+.yield-panel { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 20px; }
+.yield-panel h3 { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 20px; }
+.yield-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+.yield-row:last-child { border-bottom: none; }
+.yield-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.yield-dot.live { background: var(--success); }
+.yield-dot.coming { background: var(--warning); }
+.yield-info { flex: 1; }
+.venue-logo { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: var(--gray-100); flex-shrink: 0; margin-top: 1px; }
+.yield-info .venue-name { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.yield-info .venue-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+.swap-card {
+  background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-xl);
+  padding: 32px; border: 1px solid var(--gray-200); width: 100%; max-width: 560px;
+}
+.swap-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.swap-card-header h2 { font-size: 18px; font-weight: 700; color: var(--gray-800); }
+.live-badge {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  color: var(--success); background: rgba(64,192,87,0.1); padding: 4px 10px; border-radius: 20px;
+}
+.live-badge .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+.live-badge.error { color: var(--error); background: rgba(250,82,82,0.1); cursor: pointer; }
+.live-badge.error .live-dot { background: var(--error); animation: none; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
+.input-wrap {
+  display: flex; align-items: center; background: var(--gray-50);
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm); padding: 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-wrap:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(230,32,88,0.15); }
+.input-wrap input {
+  flex: 1; border: none; background: transparent; padding: 12px 16px;
+  font-size: 18px; font-weight: 600; color: var(--gray-800); outline: none; font-family: inherit;
+}
+.input-wrap input::placeholder { color: var(--gray-400); font-weight: 400; }
+.input-token {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--white);
+  border-radius: var(--radius-sm); font-weight: 600; font-size: 14px; color: var(--gray-700); border: 1px solid var(--gray-200);
+}
+.input-token img { width: 20px; height: 20px; border-radius: 50%; }
+.min-notice { font-size: 12px; color: var(--gray-500); margin-top: 6px; display: flex; justify-content: space-between; }
+.min-notice .error-text { color: var(--error); font-weight: 600; display: none; }
+.min-notice .error-text.visible { display: block; }
+.quote-section { background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px; border: 1px solid var(--gray-200); }
+.quote-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-200); }
+.quote-row:last-child { border-bottom: none; }
+.quote-row .quote-label { font-size: 13px; color: var(--gray-600); }
+.quote-row .quote-value { font-size: 14px; font-weight: 600; color: var(--gray-800); font-family: 'SF Mono', Monaco, monospace; }
+.quote-row .quote-value.muted { color: var(--gray-400); }
+.quote-row .quote-value.primary { color: var(--primary); font-size: 18px; }
+.sflr-rate { font-size: 12px; color: var(--gray-500); margin-top: 8px; font-style: italic; }
+.sflr-rate.hidden { display: none; }
+.slippage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.slippage-row label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+.slippage-options { display: flex; gap: 6px; }
+.slippage-btn {
+  padding: 6px 12px; border: 1px solid var(--gray-300); background: var(--white);
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.slippage-btn:hover { border-color: var(--primary); color: var(--primary); }
+.slippage-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.wallet-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  padding: 12px 16px; background: var(--gray-50); border-radius: var(--radius-sm); border: 1px solid var(--gray-200);
+}
+.wallet-info { display: flex; align-items: center; gap: 8px; }
+.wallet-info img { width: 20px; height: 20px; }
+.wallet-info .address { font-size: 14px; font-weight: 600; color: var(--gray-700); font-family: 'SF Mono', Monaco, monospace; }
+.wallet-balances { font-size: 12px; color: var(--gray-500); }
+.connect-btn {
+  padding: 8px 16px; background: var(--white); border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-700);
+  cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 6px;
+}
+.connect-btn:hover { border-color: var(--primary); color: var(--primary); }
+.connect-btn img { width: 16px; height: 16px; }
+.swap-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; font-family: inherit; position: relative; overflow: hidden;
+}
+.swap-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-xl); }
+.swap-btn:active:not(:disabled) { transform: translateY(0); }
+.swap-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.swap-btn .btn-status { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.result-msg { margin-top: 16px; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; display: none; }
+.result-msg.visible { display: block; }
+.result-msg.success { background: rgba(64,192,87,0.1); color: var(--success); border: 1px solid rgba(64,192,87,0.2); }
+.result-msg.error { background: rgba(250,82,82,0.1); color: var(--error); border: 1px solid rgba(250,82,82,0.2); }
+.status-banner {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--dark);
+  border: 1px solid var(--primary);
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.status-banner.visible { display: flex; }
+.status-banner .banner-dot { width: 8px; height: 8px; background: var(--warning); border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
+.site-footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--gray-200); text-align: center; font-size: 13px; color: var(--gray-500); width: 100%; }
+.site-footer .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; }
+.site-footer a { color: var(--gray-600); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+.site-footer a:hover { color: var(--primary); }
+.monogram {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--gray-200);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--gray-600);
+}
+@media (max-width: 900px) {
+  .app-body { flex-direction: column; align-items: center; }
+  .left-column { width: 100%; max-width: 560px; order: 2; }
+  .center-column { width: 100%; order: 1; }
+  .swap-card { max-width: 100%; }
+  .hero-band { padding: 48px 16px 40px; }
+  .hero-wordmark { font-size: 42px; }
+  .hero-headline { font-size: 18px; }
+  .hero-subline { font-size: 14px; }
+  .hero-trust { font-size: 12px; }
+  .hero-trust .trust-sep { margin: 0 8px; }
+  .routes-strip { gap: 16px; padding: 16px; }
 }
 </style>
-<base target="_blank">
 </head>
 <body>
-<div class="layout">
-  <div class="sidebar">
-    <div class="top-logos">
-      <a class="logo-badge" href="https://flare.network" target="_blank" style="text-decoration:none;color:inherit;">
-        <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkYzQzc4IiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yNSAzNWg1MHYxMEgzNXYxMGgzNXYxMEgzNXYxNUgyNXoiLz48L3N2Zz4=" alt="Flare">
-        <div><div class="badge-name">Flare</div><div class="badge-sub">Network</div></div>
-      </a>
-      <a class="logo-badge" href="https://firelight.finance" target="_blank" style="text-decoration:none;color:inherit;">
-        <img class="badge-img" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkY2QjAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyMGMtMTAgMTUtMjAgMjUtMjAgNDAgMCAxNSAxMCAyNSAyMCAyNXMyMC0xMCAyMC0yNWMwLTE1LTEwLTI1LTIwLTQweiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTUiIHI9IjgiIGZpbGw9IiNGRjZCMDAiLz48L3N2Zz4=" alt="Firelight">
-        <div><div class="badge-name">Firelight</div><div class="badge-sub">Protocol</div></div>
-      </a>
-    </div>
-    <div class="section-label">Convert from</div>
-    <a class="token-row active" href="#">
-      <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiMyNkExN0IiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlQ8L3RleHQ+PC9zdmc+" alt="USDT">
-      <div class="token-info"><div class="token-name">Tether</div><div class="token-sub">USDT</div></div>
-      <span class="token-arrow">›</span>
-    </a>
-    <a class="token-row disabled" href="#">
-      <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOTk0NUZGIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTRGMTk1Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBmaWxsPSJ1cmwoI3NnKSIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIi8+PHRleHQgeD0iNTAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjUwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UzwvdGV4dD48L3N2Zz4=" alt="SOL">
-      <div class="token-info"><div class="token-name">Solana</div><div class="token-sub">SOL</div></div>
-      <span class="soon-pill">Soon</span>
-    </a>
-    <a class="token-row disabled" href="#">
-      <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiM2MjdFRUEiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNNTAgMjBMMzAgNTBMNTAgNDBMNzAgNTBMNTAgMjBaIi8+PHBhdGggZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNiIgZD0iTTUwIDQwTDMwIDUwTDUwIDgwTDcwIDUwTDUwIDQwWiIvPjwvc3ZnPg==" alt="ETH">
-      <div class="token-info"><div class="token-name">Ethereum</div><div class="token-sub">ETH</div></div>
-      <span class="soon-pill">Soon</span>
-    </a>
-    <a class="token-row disabled" href="#">
-      <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiNGM0JBMkYiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI0NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkI8L3RleHQ+PC9zdmc+" alt="BNB">
-      <div class="token-info"><div class="token-name">BNB</div><div class="token-sub">Binance</div></div>
-      <span class="soon-pill">Soon</span>
-    </a>
-    <a class="token-row disabled" href="#">
-      <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiMwMDU2RDIiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI0NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlI8L3RleHQ+PC9zdmc+" alt="RLUSD">
-      <div class="token-info"><div class="token-name">RLUSD</div><div class="token-sub">Ripple USD</div></div>
-      <span class="soon-pill">Soon</span>
-    </a>
-    <div class="divider"></div>
-    <div class="receive-box">
-      <div class="receive-label">You receive</div>
-      <div class="receive-row">
-        <img class="token-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiNEOEE1MzUiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI2OSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlM8L3RleHQ+PC9zdmc+" alt="sFLR">
-        <div><div class="receive-name">Staked Flare</div><div class="receive-sub">sFLR · Sceptre Liquid Staking</div></div>
-      </div>
-    </div>
-    <div class="firelight-box">
-      <div class="fl-top">
-        <img class="fl-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRkY2QjAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyMGMtMTAgMTUtMjAgMjUtMjAgNDAgMCAxNSAxMCAyNSAyMCAyNXMyMC0xMCAyMC0yNWMwLTE1LTEwLTI1LTIwLTQweiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTUiIHI9IjgiIGZpbGw9IiNGRjZCMDAiLz48L3N2Zz4=" alt="Firelight">
-        <div class="fl-name">Firelight</div>
-        <div class="fl-badge">Composable</div>
-      </div>
-      <div class="fl-text">Deploy your sFLR as <strong>cover collateral</strong> and earn real yield. The jewel of the Flare ecosystem.</div>
-    </div>
-    <a class="spectra-link" href="https://app.spectra.finance" target="_blank">
-      <div class="spectra-icon">SP</div>
-      <div><div class="spectra-name">Stake on Spectra</div><div class="spectra-sub">LP pools · PT fixed yield</div></div>
-      <span class="spectra-arrow">›</span>
-    </a>
-  </div>
 
-  <div class="main">
-    <div class="g1-logo">G1FLARE</div>
-    <p class="tagline">The simplest onramp from USDT to sFLR on Flare Network. Three steps. No complexity.</p>
-
-    <!-- WALLET CONNECT BAR -->
-    <div class="wc-bar" id="wcBar" onclick="!walletConnected && openWalletModal()">
-      <svg class="wc-icon" id="wcIcon" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="var(--muted)"/>
-        <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="var(--pink)"/>
-      </svg>
-      <div class="wc-text" id="wcText"><strong>Connect Wallet</strong> — MetaMask, Ledger, Trust, +300 more</div>
-      <button class="wc-btn" id="wcBtn" onclick="event.stopPropagation(); openWalletModal()">Connect</button>
+<div class="hero-band">
+  <div class="hero-band-content">
+    <div class="hero-wordmark"><span class="g1">G1</span><span class="flare">FLARE</span></div>
+    <div class="hero-headline">The only ramp that mints sFLR at the staking rate.</div>
+    <div class="hero-subline">USDT in, staked Flare out — one signature, no sFLR pool slippage. Your gateway to Flare yield.</div>
+    <div class="hero-trust">
+      <span>Non-custodial · Atomic — settles fully or reverts fully</span>
+      <span class="trust-sep">·</span>
+      <span>0.05% flat fee</span>
+      <span class="trust-sep">·</span>
+      <span>Mints via Sceptre, swaps via SparkDEX</span>
     </div>
-
-    <!-- WALLET MODAL -->
-    <div class="wc-modal-overlay" id="wcModal" onclick="if(event.target===this)closeWalletModal()">
-      <div class="wc-modal">
-        <div class="wc-modal-title">Connect Wallet</div>
-        <div class="wc-modal-sub">Choose your preferred wallet</div>
-        <div class="wc-opt" onclick="connectMetaMask()">
-          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjRTE3NzI2IiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zNSA2MGwzMC0zNSAzMCAzNS0xNSA1IDE1IDUtMzAgMjUtMzAtMjUgMTUtNS0xNS01eiIvPjwvc3ZnPg==" alt="MetaMask">
-          <div><div class="wc-opt-name">MetaMask</div><div class="wc-opt-sub">Browser extension & mobile</div></div>
-        </div>
-        <div class="wc-opt" onclick="connectWalletConnect()">
-          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjM0I5OUZDIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zMCA0MGg0MHYyMEgzMHoiLz48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTQwIDMwaDIwdjQwSDQweiIvPjwvc3ZnPg==" alt="WalletConnect">
-          <div><div class="wc-opt-name">WalletConnect</div><div class="wc-opt-sub">Ledger, Trust, Rainbow, +300</div></div>
-        </div>
-        <div class="wc-opt" onclick="connectMetaMask()">
-          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjMzM3NUJCIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik01MCAyNWMxNSAwIDI1IDEwIDI1IDI1cy0xMCAyNS0yNSAyNS0yNS0xMC0yNS0yNSAxMC0yNSAyNS0yNXptMCA4Yy0xMCAwLTE1IDUtMTUgMTVzNSAxNSAxNSAxNSAxNS01IDE1LTE1LTUtMTUtMTUtMTV6Ii8+PC9zdmc+" alt="Trust">
-          <div><div class="wc-opt-name">Trust Wallet</div><div class="wc-opt-sub">Mobile & browser extension</div></div>
-        </div>
-        <div class="wc-opt" onclick="connectWalletConnect()">
-          <img class="wc-opt-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCBmaWxsPSIjMDAwIiByeD0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIi8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0zNSAzMGgzMHY1SDM1eiIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNNDAgNDBoMjB2NUg0MHoiLz48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTMwIDUwaDQwdjVIMzB6Ii8+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik00MCA2MGgyMHY1SDQweiIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMzUgNzBoMzB2NUgzNXoiLz48L3N2Zz4=" alt="Ledger">
-          <div><div class="wc-opt-name">Ledger Live</div><div class="wc-opt-sub">Hardware wallet</div></div>
-        </div>
-        <button class="wc-close" onclick="closeWalletModal()">Cancel</button>
-      </div>
-    </div>
-
-    <!-- SWAP WIDGET -->
-    <div class="swap-wrap">
-      <div class="swap-header">
-        <div class="swap-title">Swap</div>
-        <div class="live-dot"><div class="dot" id="liveDot"></div><span id="liveLabel">Fetching...</span></div>
-      </div>
-      <div class="rate-bar">
-        <span>FLR <strong id="flrPrice">—</strong></span>
-        <span>1 sFLR = <strong id="sflrRatio">—</strong> FLR</span>
-        <span class="refresh-t">Refreshes in <strong id="countdown">10s</strong></span>
-      </div>
-      <div class="bal-bar" id="balBar">
-        <div class="bal-item"><div class="bal-label">USDT</div><div class="bal-amt" id="usdtBal">—</div><div class="bal-usd" id="usdtBalUsd"></div></div>
-        <div class="bal-div"></div>
-        <div class="bal-item"><div class="bal-label">sFLR</div><div class="bal-amt" id="sflrBal">—</div><div class="bal-usd" id="sflrBalUsd"></div></div>
-        <div class="bal-div"></div>
-        <div class="bal-item"><div class="bal-label">FLR</div><div class="bal-amt" id="flrBal">—</div><div class="bal-usd" id="flrBalUsd"></div></div>
-        <div class="bal-addr" id="walletAddr"></div>
-      </div>
-      <div class="scard">
-        <div class="scard-label-row">
-          <div class="scard-label">You send (USDT)</div>
-          <button class="max-b" id="maxBtn" onclick="setMax()">MAX</button>
-        </div>
-        <div class="tok-input">
-          <div class="tok-badge"><div class="tok-circle u-c">USDT</div><div class="tok-lbl">USDT</div></div>
-          <input class="amt-input" type="number" id="usdtInput" placeholder="0.00" min="50" oninput="calcOutput()">
-        </div>
-        <div class="chain-sel">
-          <span style="font-size:0.56rem;color:var(--muted);align-self:center;">From:</span>
-          <button class="chain-b active" onclick="setChain('ethereum',this)">Ethereum</button>
-          <button class="chain-b" onclick="setChain('solana',this)">Solana</button>
-          <button class="chain-b" onclick="setChain('arbitrum',this)">Arbitrum</button>
-          <button class="chain-b" onclick="setChain('base',this)">Base</button>
-          <button class="chain-b" onclick="setChain('bnb',this)">BNB</button>
-        </div>
-      </div>
-      <div class="arrow-r">↓ via LayerZero USDT0</div>
-      <div class="scard">
-        <div class="scard-label">You receive</div>
-        <div class="out-sel" style="margin-top:8px;">
-          <button class="out-b active" id="btnSflr" onclick="selectOutput('sflr')">
-            <div class="tok-circle s-c">sFLR</div>
-            <div><div class="out-b-lbl">sFLR</div><div class="out-b-sub">Earns yield</div></div>
-            <span class="rec-pill">Best</span>
-          </button>
-          <button class="out-b" id="btnFlr" onclick="selectOutput('flr')">
-            <div class="tok-circle f-c">FLR</div>
-            <div><div class="out-b-lbl">FLR</div><div class="out-b-sub">Native token</div></div>
-          </button>
-        </div>
-        <div class="out-row">
-          <div class="tok-badge"><div class="tok-circle s-c" id="outCircle">sFLR</div><div class="tok-lbl" id="outLabel">sFLR</div></div>
-          <div class="out-amt" id="outAmt">—</div>
-        </div>
-        <div class="fee-bd" id="feeBd">
-          <div class="fee-r"><span>LayerZero bridge (USDT0)</span><span id="lzFee">—</span></div>
-          <div class="fee-r"><span>SparkDEX swap (0.3%)</span><span id="dexFee">—</span></div>
-          <div class="fee-r"><span>Sceptre stake</span><span>~$0.01</span></div>
-          <div class="fee-r"><span>G1Flare (0.05%)</span><span id="g1Fee">—</span></div>
-          <div class="fee-r total"><span>Total fees</span><span id="totalFee">—</span></div>
-          <div class="fee-r" id="feeEff"></div>
-          <div class="fee-r" id="minEntry"></div>
-        </div>
-        <div class="after-sw" id="afterSw"></div>
-        <div class="slip-row">
-          <span class="slip-lbl">Slippage:</span>
-          <button class="slip-b" onclick="setSlip(1,this)">1%</button>
-          <button class="slip-b" onclick="setSlip(2,this)">2%</button>
-          <button class="slip-b active" onclick="setSlip(3,this)">3%</button>
-          <button class="slip-b" onclick="setSlip(5,this)">5%</button>
-        </div>
-      </div>
-      <div class="conf-wrap" id="confWrap">
-        <div class="conf-row"><span>Quote locked — confirm within</span><span class="conf-cd" id="confTimer">30s</span></div>
-      </div>
-      <button class="swap-btn" id="swapBtn" onclick="handleBtn()">
-        <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.8);animation:blink 2s infinite;" id="btnPulse"></span>
-        <span id="btnText">Connect Wallet to Swap</span>
-      </button>
-      <div class="lz-badge"><div class="lz-dot"></div>Powered by LayerZero USDT0 · Native USDT · No wrapped tokens</div>
-      <div class="err-msg" id="errMsg"></div>
-    </div>
-
-    <div class="cta-wrap">
-      <div class="stake-wrap">
-        <button class="stake-btn">Stake sFLR ▾</button>
-        <div class="stake-dropdown">
-          <a class="stake-opt" href="https://app.spectra.finance" target="_blank">
-            <div class="stake-opt-icon sp-c">SP</div>
-            <div><div class="stake-opt-name">Spectra</div><div class="stake-opt-sub">LP pools · PT fixed yield</div></div>
-          </a>
-          <a class="stake-opt" href="https://sparkdex.ai" target="_blank">
-            <div class="stake-opt-icon sd-c">SD</div>
-            <div><div class="stake-opt-name">SparkDEX</div><div class="stake-opt-sub">Liquidity pools · Swap</div></div>
-          </a>
-          <a class="stake-opt" href="https://firelight.finance" target="_blank">
-            <div class="stake-opt-icon fl-c">FL</div>
-            <div><div class="stake-opt-name">Firelight</div><div class="stake-opt-sub">Cover collateral · Yield</div></div>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="meta">0.05% fee · Non-custodial · Permissionless · Built on Flare</div>
   </div>
 </div>
 
-<div class="mobile-nav">
-  <a class="mn-item active" href="#"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiMyNkExN0IiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI1MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlQ8L3RleHQ+PC9zdmc+" alt="USDT"><div class="mn-lbl">USDT</div></a>
-  <a class="mn-item disabled" href="#"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOTk0NUZGIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTRGMTk1Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PGNpcmNsZSBmaWxsPSJ1cmwoI3NnKSIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIi8+PHRleHQgeD0iNTAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjUwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UzwvdGV4dD48L3N2Zz4=" alt="SOL"><div class="mn-lbl">SOL</div><div class="mn-soon">Soon</div></a>
-  <a class="mn-item disabled" href="#"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiM2MjdFRUEiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNNTAgMjBMMzAgNTBMNTAgNDBMNzAgNTBMNTAgMjBaIi8+PHBhdGggZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNiIgZD0iTTUwIDQwTDMwIDUwTDUwIDgwTDcwIDUwTDUwIDQwWiIvPjwvc3ZnPg==" alt="ETH"><div class="mn-lbl">ETH</div><div class="mn-soon">Soon</div></a>
-  <a class="mn-item disabled" href="#"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiNGM0JBMkYiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI0NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkI8L3RleHQ+PC9zdmc+" alt="BNB"><div class="mn-lbl">BNB</div><div class="mn-soon">Soon</div></a>
-  <a class="mn-item disabled" href="#"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGZpbGw9IiMwMDU2RDIiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI0NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlI8L3RleHQ+PC9zdmc+" alt="RLUSD"><div class="mn-lbl">RLUSD</div><div class="mn-soon">Soon</div></a>
+<div class="routes-strip">
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png" alt="USDT" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='U';">
+    <span class="route-name">USDT</span>
+    <span class="route-pill live">Live</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/info/logo.png" alt="Ethereum" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='E';">
+    <span class="route-name">ETH</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/solana/info/logo.png" alt="Solana" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='S';">
+    <span class="route-name">SOL</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/binance/info/logo.png" alt="BNB" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='B';">
+    <span class="route-name">BNB</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="RLUSD" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='R';">
+    <span class="route-name">RLUSD</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="XRP" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='X';">
+    <span class="route-name">XRP → stXRP</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+</div>
+
+<div class="app-body">
+
+  <div class="left-column">
+    <div class="yield-panel">
+      <h3>What sFLR unlocks</h3>
+      <div style="font-size:13px;font-style:italic;color:var(--gray-500);margin:-12px 0 14px;">G1Flare is your entry. These are the doors.</div>
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=sceptre.fi&sz=64" alt="Sceptre" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>S</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Sceptre</div>
+          <div class="venue-desc">Liquid staking rewards, automatic from day one.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=spectra.finance&sz=64" alt="Spectra" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>SP</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Spectra</div>
+          <div class="venue-desc">Fixed yield (PT) or LP your sFLR.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=sparkdex.ai&sz=64" alt="SparkDEX V4" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>SD</div>'">
+        <div class="yield-info">
+          <div class="venue-name">SparkDEX V4</div>
+          <div class="venue-desc">Single-sided ALM vaults (ICHI/Steer) + rFLR emissions.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot coming"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=firelight.finance&sz=64" alt="Firelight" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>F</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Firelight</div>
+          <div class="venue-desc">Insurance cover collateral. Phase 2 July 2026.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot coming"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=upshift.finance&sz=64" alt="Upshift" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>U</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Upshift</div>
+          <div class="venue-desc">XRP-side vaults (earnXRP, MXRPY); stXRP route coming to G1Flare.</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:14px;padding-top:12px;border-top:1px dashed var(--gray-300);line-height:1.6;">In development: <strong style="color:var(--gray-700)">XRP → FXRP → stXRP</strong> — the one-signature pipeline from idle XRP to Firelight-staked yield.</div>
+    </div>
+  </div>
+
+  <div class="center-column">
+
+    <div class="status-banner" id="pausedBanner">
+      <span class="banner-dot"></span>
+      <span>Pre-launch — contracts deployed and verified on Flare mainnet. Swaps open soon.</span>
+    </div>
+
+    <div class="swap-card">
+      <div class="swap-card-header">
+        <h2>Swap</h2>
+        <div class="live-badge" id="liveBadge">
+          <span class="live-dot"></span>
+          <span id="liveText">Live · on-chain</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>You send</label>
+        <div class="input-wrap">
+          <input type="number" id="amountInput" placeholder="0.00" min="50" step="0.01">
+          <div class="input-token">
+            <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png" alt="USDT" width="20" height="20" onerror="this.style.display='none'">
+            <span>USDT</span>
+          </div>
+        </div>
+        <div class="min-notice">
+          <span>Minimum: 50 USDT</span>
+          <span class="error-text" id="minError">Minimum 50 USDT required</span>
+        </div>
+      </div>
+
+      <div class="quote-section">
+        <div class="quote-row">
+          <span class="quote-label">You receive (est.)</span>
+          <span class="quote-value muted" id="quoteOut">—</span>
+        </div>
+        <div class="quote-row">
+          <span class="quote-label">Rate</span>
+          <span class="quote-value muted" id="quoteRate">—</span>
+        </div>
+        <div class="quote-row">
+          <span class="quote-label">Fee (0.05%)</span>
+          <span class="quote-value muted" id="quoteFee">—</span>
+        </div>
+        <div class="quote-row">
+          <span class="quote-label">Net amount</span>
+          <span class="quote-value muted" id="quoteNet">—</span>
+        </div>
+        <div class="sflr-rate hidden" id="sflrRate"></div>
+      </div>
+
+      <div class="slippage-row">
+        <label>Slippage tolerance</label>
+        <div class="slippage-options">
+          <button class="slippage-btn" data-slippage="1">1%</button>
+          <button class="slippage-btn" data-slippage="2">2%</button>
+          <button class="slippage-btn active" data-slippage="3">3%</button>
+          <button class="slippage-btn" data-slippage="5">5%</button>
+        </div>
+      </div>
+
+      <div class="wallet-row" id="walletRow">
+        <button class="connect-btn" id="connectBtn">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+          Connect Wallet
+        </button>
+      </div>
+
+      <button class="swap-btn" id="swapBtn" disabled>
+        <span class="btn-status" id="btnStatus">Enter amount</span>
+      </button>
+
+      <div class="result-msg" id="resultMsg"></div>
+    </div>
+
+    <div class="hiw-section">
+      <h3>How it works</h3>
+      <div class="hiw-steps">
+        <div class="hiw-step">
+          <div class="step-num">1</div>
+          <div class="step-title">Approve</div>
+          <div class="step-desc">Authorize the exact USDT amount. Nothing else, nothing unlimited.</div>
+        </div>
+        <div class="hiw-step">
+          <div class="step-num">2</div>
+          <div class="step-title">One signature</div>
+          <div class="step-desc">Your USDT swaps to WFLR on SparkDEX and mints sFLR via Sceptre — atomically. If anything fails, everything reverts.</div>
+        </div>
+        <div class="hiw-step">
+          <div class="step-num">3</div>
+          <div class="step-title">sFLR lands</div>
+          <div class="step-desc">Staked Flare arrives in your wallet, earning from the first block. Firelight-ready collateral (Phase 2 July 2026).</div>
+        </div>
+      </div>
+      <div class="hiw-note">Contracts hold nothing between transactions — verified live on <a href="https://flarescan.com/address/0x9f17a5d7CD90181a34A2011e900B440D71E2C011" target="_blank" rel="noopener">Flarescan</a>.</div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="https://flare.network" target="_blank" rel="noopener">Flare Network</a>
+        <a href="https://docs.sparkdex.ai" target="_blank" rel="noopener">SparkDEX</a>
+        <a href="https://usdt0.to" target="_blank" rel="noopener">USDT0</a>
+      </div>
+      <p>Powered by LayerZero USDT0 · Native USDT · No wrapped tokens</p>
+    </footer>
+  </div>
 </div>
 
 <script>
-let flrPrice=null, sflrRatio=null, slippage=3, refreshTimer=10;
-let walletConnected=false, outputToken='sflr', confirmInterval=null;
-let usdtBalance=0, sflrBalance=0, flrBalance=0, sourceChain='ethereum';
-let walletProvider=null, walletType=null;
-const CHAIN_LZ = {ethereum:2.50, solana:0.80, arbitrum:0.30, base:0.25, bnb:0.40};
+const ADDRESSES = {
+  Module1: '0x9f17a5d7CD90181a34A2011e900B440D71E2C011',
+  Module2: '0x67f8821262Af73F0E6c3031Ff7180a34993D524C',
+  USDT0: '0xe7cd86e13AC4309349F30B3435a9d337750fC82D',
+  WFLR: '0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d',
+  sFLR: '0x12e605bc104e93B45e1aD99F9e555f659051c2BB',
+  QuoterV2: '0x5B5513c55fd06e2658010c121c37b07fC8e8B705',
+  RPC: 'https://flare-api.flare.network/ext/C/rpc'
+};
 
-function openWalletModal(){ document.getElementById('wcModal').classList.add('show'); }
-function closeWalletModal(){ document.getElementById('wcModal').classList.remove('show'); }
+const CHAIN_ID = 14;
+const CHAIN_HEX = '0xe';
+const MIN_AMOUNT = 50;
+const FEE_BPS = 5n;
+const AUTO_REFRESH_MS = 15000;
+const DEBOUNCE_MS = 500;
 
-async function fetchRates(){
+const ERC20_ABI = [
+  'function balanceOf(address) view returns (uint256)',
+  'function allowance(address,address) view returns (uint256)',
+  'function approve(address,uint256) returns (bool)',
+  'function decimals() view returns (uint8)',
+  'function symbol() view returns (string)'
+];
+
+const MODULE1_ABI = [
+  'function depositDirect(uint256 amount, bytes swapData)',
+  'function paused() view returns (bool)',
+  'function owner() view returns (address)',
+  'function sparkDEXRouter() view returns (address)'
+];
+
+const MODULE2_ABI = [
+  'function swapAndStake(uint256 usdtAmount, uint256 minWflrOut, address recipient, uint256 deadline)'
+];
+
+const QUOTER_ABI = [
+  'function quoteExactInputSingle((address tokenIn, address tokenOut, uint256 amountIn, uint24 fee, uint160 sqrtPriceLimitX96)) external returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)'
+];
+
+const SFLR_ABI = [
+  'function getPooledFlrByShares(uint256 shares) view returns (uint256)',
+  'function balanceOf(address) view returns (uint256)'
+];
+
+let provider, signer, userAddress;
+let usdt0Contract, module1Contract, quoterContract, sflrContract;
+let currentQuote = null;
+let lastQuoteTime = 0;
+let isPaused = false;
+let slippage = 3;
+let quoteTimer = null;
+let refreshTimer = null;
+let tickerTimer = null;
+let isErrorState = false;
+
+const els = {
+  amountInput: document.getElementById('amountInput'),
+  quoteOut: document.getElementById('quoteOut'),
+  quoteRate: document.getElementById('quoteRate'),
+  quoteFee: document.getElementById('quoteFee'),
+  quoteNet: document.getElementById('quoteNet'),
+  sflrRate: document.getElementById('sflrRate'),
+  liveBadge: document.getElementById('liveBadge'),
+  liveText: document.getElementById('liveText'),
+  connectBtn: document.getElementById('connectBtn'),
+  walletRow: document.getElementById('walletRow'),
+  swapBtn: document.getElementById('swapBtn'),
+  btnStatus: document.getElementById('btnStatus'),
+  resultMsg: document.getElementById('resultMsg'),
+  pausedBanner: document.getElementById('pausedBanner'),
+  minError: document.getElementById('minError'),
+  slippageBtns: document.querySelectorAll('.slippage-btn')
+};
+
+function toAmountString(amount) {
+  return (Math.floor(amount * 100) / 100).toFixed(2);
+}
+
+async function init() {
+  provider = new ethers.JsonRpcProvider(ADDRESSES.RPC);
+  quoterContract = new ethers.Contract(ADDRESSES.QuoterV2, QUOTER_ABI, provider);
+  sflrContract = new ethers.Contract(ADDRESSES.sFLR, SFLR_ABI, provider);
+  module1Contract = new ethers.Contract(ADDRESSES.Module1, MODULE1_ABI, provider);
+
   try {
-    const [flrRes, sflrRes] = await Promise.all([
-      fetch('https://api.coincap.io/v2/assets/flare'),
-      fetch('https://api.coincap.io/v2/assets/sceptre-staked-flr')
-    ]);
-    const flrData = await flrRes.json();
-    const sflrData = await sflrRes.json();
-    const newFlrPrice = parseFloat(flrData?.data?.priceUsd);
-    const newSflrPrice = parseFloat(sflrData?.data?.priceUsd);
-
-    if(newFlrPrice && newSflrPrice && newFlrPrice > 0){
-      flrPrice = newFlrPrice;
-      sflrRatio = newSflrPrice / newFlrPrice;
-      document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6);
-      document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4);
-      document.getElementById('liveDot').className = 'dot';
-      document.getElementById('liveLabel').textContent = 'Live';
-      updateBalUsd();
-      calcOutput();
-    } else {
-      throw new Error('Invalid price data');
+    isPaused = await module1Contract.paused();
+    if (isPaused) {
+      els.pausedBanner.classList.add('visible');
+      els.swapBtn.disabled = true;
+      els.btnStatus.textContent = 'Pre-launch — swaps open soon';
     }
-  } catch(e) {
-    if(flrPrice){
-      document.getElementById('liveDot').className = 'dot stale';
-      document.getElementById('liveLabel').textContent = 'Stale';
-    } else {
-      flrPrice = 0.006623; sflrRatio = 1.67;
-      document.getElementById('flrPrice').textContent = '$' + flrPrice.toFixed(6) + '*';
-      document.getElementById('sflrRatio').textContent = sflrRatio.toFixed(4) + '*';
-      document.getElementById('liveDot').className = 'dot error';
-      document.getElementById('liveLabel').textContent = 'Cached';
-    }
-    calcOutput();
-  }
-}
-
-function setChain(c, btn){
-  sourceChain = c;
-  document.querySelectorAll('.chain-b').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  calcOutput();
-}
-
-function selectOutput(t){
-  outputToken = t;
-  document.getElementById('btnSflr').classList.toggle('active', t === 'sflr');
-  document.getElementById('btnFlr').classList.toggle('active', t === 'flr');
-  document.getElementById('outCircle').textContent = t === 'sflr' ? 'sFLR' : 'FLR';
-  document.getElementById('outCircle').className = 'tok-circle ' + (t === 'sflr' ? 's-c' : 'f-c');
-  document.getElementById('outLabel').textContent = t === 'sflr' ? 'sFLR' : 'FLR';
-  calcOutput();
-}
-
-function calcOutput(){
-  if(!flrPrice || !sflrRatio) return;
-  const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
-  if(usdt === 0){
-    document.getElementById('outAmt').textContent = '—';
-    document.getElementById('feeBd').classList.remove('show');
-    document.getElementById('afterSw').classList.remove('show');
-    return;
+  } catch (e) {
+    console.error('Failed to check paused state:', e);
   }
 
-  const lzF = CHAIN_LZ[sourceChain] || 1;
-  const dexF = usdt * 0.003;
-  const g1F = usdt * 0.0005;
-  const total = lzF + dexF + g1F + 0.01;
-  const after = Math.max(0, usdt - total);
-  const pct = (total / usdt) * 100;
-  const flrAmt = after / flrPrice;
-  let out, sym;
+  await quoteRateOnly();
+  refreshTimer = setInterval(autoRefresh, AUTO_REFRESH_MS);
+  tickerTimer = setInterval(updateLiveTicker, 1000);
 
-  if(outputToken === 'sflr'){
-    out = flrAmt / sflrRatio;
-    sym = 'sFLR';
-  } else {
-    out = flrAmt;
-    sym = 'FLR';
-  }
-  const minOut = out * (1 - slippage / 100);
-
-  document.getElementById('outAmt').textContent = out > 0 ? out.toFixed(2) : 'Too small';
-  document.getElementById('lzFee').textContent = '$' + lzF.toFixed(2);
-  document.getElementById('dexFee').textContent = '$' + dexF.toFixed(3);
-  document.getElementById('g1Fee').textContent = '$' + g1F.toFixed(4);
-  document.getElementById('totalFee').textContent = '$' + total.toFixed(2);
-  document.getElementById('feeBd').classList.add('show');
-
-  const eff = document.getElementById('feeEff');
-  eff.className = 'fee-r';
-  if(pct > 10){ eff.classList.add('warn'); eff.innerHTML = `<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — too high</span>`; }
-  else if(pct > 5){ eff.classList.add('warn'); eff.innerHTML = `<span>⚠ Fee impact</span><span>${pct.toFixed(1)}% — borderline</span>`; }
-  else { eff.classList.add('good'); eff.innerHTML = `<span>✓ Fee impact</span><span>${pct.toFixed(1)}% — good</span>`; }
-
-  const be = (lzF + 0.01) / (1 - 0.003 - 0.0005);
-  document.getElementById('minEntry').innerHTML = `<span>Min viable</span><span>$${be.toFixed(0)} · Recommended $${(be * 4).toFixed(0)}+</span>`;
-
-  if(walletConnected && out > 0){
-    const nu = Math.max(0, usdtBalance - usdt);
-    const no = outputToken === 'sflr' ? sflrBalance + out : flrBalance + out;
-    document.getElementById('afterSw').innerHTML = `After swap → USDT: <strong>${nu.toFixed(2)}</strong> · ${sym}: <strong>${no.toFixed(2)}</strong> · Min: ${minOut.toFixed(2)}`;
-    document.getElementById('afterSw').classList.add('show');
-  }
-}
-
-function updateBalUsd(){
-  if(!flrPrice || !sflrRatio) return;
-  const sp = sflrRatio * flrPrice;
-  if(usdtBalance > 0) document.getElementById('usdtBalUsd').textContent = '≈ $' + usdtBalance.toFixed(2);
-  if(sflrBalance > 0) document.getElementById('sflrBalUsd').textContent = '≈ $' + (sflrBalance * sp).toFixed(2);
-  if(flrBalance > 0) document.getElementById('flrBalUsd').textContent = '≈ $' + (flrBalance * flrPrice).toFixed(2);
-}
-
-function setMax(){
-  document.getElementById('usdtInput').value = usdtBalance.toFixed(2);
-  calcOutput();
-}
-
-function setSlip(v, btn){
-  slippage = v;
-  document.querySelectorAll('.slip-b').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  calcOutput();
-}
-
-function startCountdown(){
-  refreshTimer = 10;
-  clearInterval(window.ri);
-  window.ri = setInterval(() => {
-    refreshTimer--;
-    document.getElementById('countdown').textContent = refreshTimer + 's';
-    if(refreshTimer <= 0){ refreshTimer = 10; fetchRates(); }
-  }, 1000);
-}
-
-function startConfirmTimer(){
-  let t = 30;
-  document.getElementById('confWrap').classList.add('show');
-  clearInterval(confirmInterval);
-  confirmInterval = setInterval(() => {
-    t--;
-    const el = document.getElementById('confTimer');
-    el.textContent = t + 's';
-    if(t <= 10) el.className = 'conf-cd urgent';
-    if(t <= 0){
-      clearInterval(confirmInterval);
-      document.getElementById('confWrap').classList.remove('show');
-      document.getElementById('btnText').textContent = 'Quote expired — tap to refresh';
-      document.getElementById('swapBtn').onclick = () => {
-        fetchRates(); startCountdown();
-        document.getElementById('swapBtn').onclick = handleBtn;
-        document.getElementById('btnText').textContent = 'Swap';
-      };
-    }
-  }, 1000);
-}
-
-async function handleBtn(){
-  if(!walletConnected){
-    openWalletModal();
-  } else {
-    const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
-    if(usdt < 50){
-      document.getElementById('errMsg').textContent = 'Minimum swap is $50 USDT';
-      document.getElementById('errMsg').classList.add('show');
-      return;
-    }
-    if(usdt > usdtBalance && usdtBalance > 0){
-      document.getElementById('errMsg').textContent = 'Insufficient USDT balance';
-      document.getElementById('errMsg').classList.add('show');
-      return;
-    }
-    document.getElementById('errMsg').classList.remove('show');
-    startConfirmTimer();
-    document.getElementById('btnText').textContent = 'Confirm in wallet — coming soon';
-  }
-}
-
-async function connectMetaMask(){
-  closeWalletModal();
-  if(!window.ethereum){
-    document.getElementById('errMsg').textContent = 'MetaMask not detected. Install MetaMask or use WalletConnect.';
-    document.getElementById('errMsg').classList.add('show');
-    return;
-  }
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    if(accounts.length === 0) return;
-    walletType = 'metamask';
-    await finalizeConnection(accounts[0], window.ethereum);
-  } catch(err){
-    document.getElementById('errMsg').textContent = 'Connection failed: ' + err.message;
-    document.getElementById('errMsg').classList.add('show');
-  }
-}
-
-async function connectWalletConnect(){
-  closeWalletModal();
-  try {
-    const provider = await window.EthereumProvider.init({
-      projectId: 'bdcdc7d12ba6fb8e2db5f4e87781ab7c',
-      chains: [14],
-      showQrModal: true,
-      methods: ['eth_sendTransaction', 'eth_sign', 'personal_sign'],
-      events: ['chainChanged', 'accountsChanged']
+  els.amountInput.addEventListener('input', debounceQuote);
+  els.connectBtn.addEventListener('click', connectWallet);
+  els.swapBtn.addEventListener('click', executeSwap);
+  els.slippageBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      els.slippageBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      slippage = parseInt(btn.dataset.slippage);
+      updateQuoteDisplay();
     });
-    await provider.enable();
-    const accounts = provider.accounts;
-    if(accounts.length === 0) return;
-    walletType = 'walletconnect';
-    walletProvider = provider;
-    await finalizeConnection(accounts[0], provider);
-  } catch(err){
-    document.getElementById('errMsg').textContent = 'WalletConnect failed: ' + err.message;
-    document.getElementById('errMsg').classList.add('show');
+  });
+}
+
+function updateLiveTicker() {
+  if (isErrorState || lastQuoteTime === 0) return;
+  const seconds = Math.floor((Date.now() - lastQuoteTime) / 1000);
+  els.liveText.textContent = `Live · ${seconds}s ago`;
+}
+
+async function fetchSflrRate() {
+  let sflrRateText = '';
+  let pooledRate = 0n;
+  try {
+    pooledRate = await sflrContract.getPooledFlrByShares(ethers.parseEther('1'));
+    const sflrFlr = ethers.formatEther(pooledRate);
+    sflrRateText = `1 sFLR ≈ ${parseFloat(sflrFlr).toFixed(4)} FLR`;
+  } catch (e) {}
+  return { pooledRate, sflrRateText };
+}
+
+async function quoteRateOnly() {
+  try {
+    const quoterIface = new ethers.Interface(QUOTER_ABI);
+    const quoteData = quoterIface.encodeFunctionData('quoteExactInputSingle', [{
+      tokenIn: ADDRESSES.USDT0,
+      tokenOut: ADDRESSES.WFLR,
+      amountIn: ethers.parseUnits('1', 6),
+      fee: 500,
+      sqrtPriceLimitX96: 0
+    }]);
+
+    const result = await provider.call({
+      to: ADDRESSES.QuoterV2,
+      data: quoteData
+    });
+
+    const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', result);
+    const wflrOut = decoded[0];
+    const rate = parseFloat(ethers.formatEther(wflrOut));
+
+    const { pooledRate, sflrRateText } = await fetchSflrRate();
+
+    currentQuote = {
+      rate: rate,
+      pooledRate: pooledRate,
+      sflrRateText: sflrRateText,
+      timestamp: Date.now()
+    };
+
+    lastQuoteTime = Date.now();
+    isErrorState = false;
+    updateRateOnlyDisplay();
+  } catch (e) {
+    console.error('Rate-only quote failed:', e);
+    isErrorState = true;
+    updateLiveBadge(false);
   }
 }
 
-async function finalizeConnection(addr, provider){
-  walletConnected = true;
+function updateRateOnlyDisplay() {
+  if (!currentQuote) return;
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
+  els.quoteRate.classList.remove('muted');
+  if (currentQuote.sflrRateText) {
+    els.sflrRate.textContent = currentQuote.sflrRateText;
+    els.sflrRate.classList.remove('hidden');
+  }
+  els.quoteOut.textContent = '—';
+  els.quoteOut.classList.add('muted');
+  els.quoteOut.classList.remove('primary');
+  els.quoteFee.textContent = '—';
+  els.quoteFee.classList.add('muted');
+  els.quoteNet.textContent = '—';
+  els.quoteNet.classList.add('muted');
+}
 
-  const chainId = await provider.request({ method: 'eth_chainId' });
-  const isFlare = chainId === '0xe' || chainId === '0x72';
+function debounceQuote() {
+  clearTimeout(quoteTimer);
+  const val = parseFloat(els.amountInput.value);
+  if (val && val >= MIN_AMOUNT) {
+    els.minError.classList.remove('visible');
+  }
+  quoteTimer = setTimeout(() => {
+    const amount = parseFloat(els.amountInput.value);
+    if (!amount || amount <= 0) {
+      quoteRateOnly();
+      return;
+    }
+    quoteAmount(amount);
+  }, DEBOUNCE_MS);
+}
 
-  if(!isFlare){
-    try {
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0xe' }]
+async function quoteAmount(amount) {
+  try {
+    const amountIn = ethers.parseUnits(toAmountString(amount), 6);
+    const netAmount = amountIn - (amountIn * FEE_BPS / 10000n);
+
+    const quoterIface = new ethers.Interface(QUOTER_ABI);
+    const quoteData = quoterIface.encodeFunctionData('quoteExactInputSingle', [{
+      tokenIn: ADDRESSES.USDT0,
+      tokenOut: ADDRESSES.WFLR,
+      amountIn: netAmount,
+      fee: 500,
+      sqrtPriceLimitX96: 0
+    }]);
+
+    const result = await provider.call({
+      to: ADDRESSES.QuoterV2,
+      data: quoteData
+    });
+
+    const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', result);
+    const wflrOut = decoded[0];
+
+    const { pooledRate, sflrRateText } = await fetchSflrRate();
+
+    currentQuote = {
+      amountIn: amountIn,
+      netAmount: netAmount,
+      wflrOut: wflrOut,
+      pooledRate: pooledRate,
+      sflrRateText: sflrRateText,
+      rate: parseFloat(ethers.formatEther(wflrOut)) / parseFloat(ethers.formatUnits(netAmount, 6)),
+      timestamp: Date.now()
+    };
+
+    lastQuoteTime = Date.now();
+    isErrorState = false;
+    updateQuoteDisplay();
+    updateLiveBadge(true);
+  } catch (e) {
+    console.error('Quote failed:', e);
+    isErrorState = true;
+    updateLiveBadge(false);
+    clearQuoteDisplay();
+  }
+}
+
+async function autoRefresh() {
+  const amount = parseFloat(els.amountInput.value);
+  if (!amount || amount <= 0) {
+    await quoteRateOnly();
+  } else {
+    await quoteAmount(amount);
+  }
+}
+
+function updateQuoteDisplay() {
+  if (!currentQuote || !currentQuote.wflrOut) {
+    updateRateOnlyDisplay();
+    return;
+  }
+
+  const wflrFormatted = ethers.formatEther(currentQuote.wflrOut);
+  const feeFormatted = ethers.formatUnits(currentQuote.amountIn - currentQuote.netAmount, 6);
+  const netFormatted = ethers.formatUnits(currentQuote.netAmount, 6);
+
+  if (currentQuote.pooledRate && currentQuote.pooledRate > 0n) {
+    const sflrOut = currentQuote.wflrOut * (10n ** 18n) / currentQuote.pooledRate;
+    const sflrOutFormatted = ethers.formatEther(sflrOut);
+    els.quoteOut.textContent = `${parseFloat(sflrOutFormatted).toFixed(4)} sFLR`;
+  } else {
+    els.quoteOut.textContent = `${parseFloat(wflrFormatted).toFixed(4)} WFLR (staked to sFLR)`;
+  }
+  els.quoteOut.classList.remove('muted');
+  els.quoteOut.classList.add('primary');
+
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
+  els.quoteRate.classList.remove('muted');
+
+  els.quoteFee.textContent = `${parseFloat(feeFormatted).toFixed(4)} USDT`;
+  els.quoteFee.classList.remove('muted');
+
+  els.quoteNet.textContent = `${parseFloat(netFormatted).toFixed(4)} USDT`;
+  els.quoteNet.classList.remove('muted');
+
+  if (currentQuote.sflrRateText) {
+    els.sflrRate.textContent = currentQuote.sflrRateText;
+    els.sflrRate.classList.remove('hidden');
+  }
+
+  if (!isPaused && userAddress) {
+    const amount = parseFloat(els.amountInput.value);
+    if (amount && amount >= MIN_AMOUNT) {
+      els.swapBtn.disabled = false;
+      els.btnStatus.textContent = 'Swap';
+    } else {
+      els.swapBtn.disabled = true;
+      els.btnStatus.textContent = amount ? 'Minimum 50 USDT' : 'Enter amount';
+    }
+  }
+}
+
+function clearQuoteDisplay() {
+  els.quoteOut.textContent = '—';
+  els.quoteOut.classList.add('muted');
+  els.quoteOut.classList.remove('primary');
+  els.quoteRate.textContent = '—';
+  els.quoteRate.classList.add('muted');
+  els.quoteFee.textContent = '—';
+  els.quoteFee.classList.add('muted');
+  els.quoteNet.textContent = '—';
+  els.quoteNet.classList.add('muted');
+  els.sflrRate.classList.add('hidden');
+}
+
+function updateLiveBadge(ok) {
+  if (ok) {
+    const seconds = Math.floor((Date.now() - lastQuoteTime) / 1000);
+    els.liveBadge.classList.remove('error');
+    els.liveText.textContent = `Live · ${seconds}s ago`;
+  } else {
+    els.liveBadge.classList.add('error');
+    els.liveText.innerHTML = 'Failed — <a href="#" onclick="autoRefresh();return false;" style="color:inherit;text-decoration:underline">retry</a>';
+  }
+}
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    showResult('Please install MetaMask or a compatible wallet', 'error');
+    return;
+  }
+
+  try {
+    const browserProvider = new ethers.BrowserProvider(window.ethereum);
+    await browserProvider.send('eth_requestAccounts', []);
+    signer = await browserProvider.getSigner();
+    userAddress = await signer.getAddress();
+
+    const network = await browserProvider.getNetwork();
+    if (network.chainId !== BigInt(CHAIN_ID)) {
+      await switchChain();
+    }
+
+    updateWalletUI();
+
+    usdt0Contract = new ethers.Contract(ADDRESSES.USDT0, ERC20_ABI, signer);
+    module1Contract = new ethers.Contract(ADDRESSES.Module1, MODULE1_ABI, signer);
+
+    await refreshBalances();
+    updateQuoteDisplay();
+  } catch (e) {
+    console.error('Connect failed:', e);
+    showResult('Connection failed: ' + (e.message || e), 'error');
+  }
+}
+
+async function switchChain() {
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: CHAIN_HEX }]
+    });
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: CHAIN_HEX,
+          chainName: 'Flare',
+          nativeCurrency: { name: 'FLR', symbol: 'FLR', decimals: 18 },
+          rpcUrls: [ADDRESSES.RPC],
+          blockExplorerUrls: ['https://flarescan.com']
+        }]
       });
-    } catch(switchErr){
-      if(switchErr.code === 4902){
-        await provider.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: '0xe',
-            chainName: 'Flare Mainnet',
-            nativeCurrency: { name: 'Flare', symbol: 'FLR', decimals: 18 },
-            rpcUrls: ['https://flare-api.flare.network/ext/C/rpc'],
-            blockExplorerUrls: ['https://flare-explorer.flare.network']
-          }]
-        });
-      }
+    } else {
+      throw switchError;
     }
   }
+}
 
-  document.getElementById('wcBar').classList.add('connected');
-  document.getElementById('wcText').innerHTML = `<strong>${addr.slice(0,6)}...${addr.slice(-4)}</strong> · ${walletType === 'metamask' ? 'MetaMask' : 'WalletConnect'}`;
-  document.getElementById('wcBtn').textContent = 'Disconnect';
-  document.getElementById('wcBtn').classList.add('connected');
-  document.getElementById('wcBtn').onclick = (e) => { e.stopPropagation(); disconnectWallet(); };
+function updateWalletUI() {
+  const shortAddr = userAddress.slice(0, 4) + '…' + userAddress.slice(-4);
+  els.walletRow.innerHTML = `
+    <div class="wallet-info">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="wallet" onerror="this.style.display='none'">
+      <span class="address">${shortAddr}</span>
+    </div>
+    <div class="wallet-balances" id="walletBalances">Loading…</div>
+  `;
+}
 
-  document.getElementById('walletAddr').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
-  document.getElementById('balBar').classList.add('show');
-  document.getElementById('swapBtn').classList.add('connected');
-  document.getElementById('btnPulse').style.display = 'none';
-  document.getElementById('btnText').textContent = 'Swap USDT → ' + (outputToken === 'sflr' ? 'sFLR' : 'FLR');
-  document.getElementById('maxBtn').style.display = 'block';
-  document.getElementById('errMsg').classList.remove('show');
-
-  await fetchBalances(addr);
-
-  if(walletType === 'metamask' && window.ethereum){
-    window.ethereum.on('accountsChanged', (accs) => {
-      if(accs.length === 0) disconnectWallet();
-      else finalizeConnection(accs[0], window.ethereum);
-    });
-    window.ethereum.on('chainChanged', () => window.location.reload());
-  } else if(walletProvider){
-    walletProvider.on('accountsChanged', (accs) => {
-      if(accs.length === 0) disconnectWallet();
-      else finalizeConnection(accs[0], walletProvider);
-    });
-    walletProvider.on('chainChanged', () => window.location.reload());
+async function refreshBalances() {
+  if (!userAddress || !usdt0Contract) return;
+  try {
+    const [usdtBal, sflrBal] = await Promise.all([
+      usdt0Contract.balanceOf(userAddress),
+      sflrContract.balanceOf(userAddress)
+    ]);
+    const usdtFormatted = ethers.formatUnits(usdtBal, 6);
+    const sflrFormatted = ethers.formatEther(sflrBal);
+    const balEl = document.getElementById('walletBalances');
+    if (balEl) {
+      balEl.textContent = `${parseFloat(usdtFormatted).toFixed(2)} USDT · ${parseFloat(sflrFormatted).toFixed(4)} sFLR`;
+    }
+  } catch (e) {
+    console.error('Balance refresh failed:', e);
   }
 }
 
-async function fetchBalances(addr){
-  usdtBalance = 1250.50;
-  sflrBalance = 8432.17;
-  flrBalance = 15000;
-
-  document.getElementById('usdtBal').textContent = usdtBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  document.getElementById('sflrBal').textContent = sflrBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  document.getElementById('flrBal').textContent = flrBalance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
-
-  updateBalUsd();
-  calcOutput();
-}
-
-function disconnectWallet(){
-  walletConnected = false;
-  usdtBalance = 0; sflrBalance = 0; flrBalance = 0;
-  walletType = null;
-  if(walletProvider){
-    try { walletProvider.disconnect(); } catch(e){}
-    walletProvider = null;
+async function executeSwap() {
+  const amount = parseFloat(els.amountInput.value);
+  if (!amount || amount < MIN_AMOUNT) {
+    els.minError.classList.add('visible');
+    return;
   }
 
-  document.getElementById('wcBar').classList.remove('connected');
-  document.getElementById('wcText').innerHTML = '<strong>Connect Wallet</strong> — MetaMask, Ledger, Trust, +300 more';
-  document.getElementById('wcBtn').textContent = 'Connect';
-  document.getElementById('wcBtn').classList.remove('connected');
-  document.getElementById('wcBtn').onclick = (e) => { e.stopPropagation(); openWalletModal(); };
+  if (!signer || !userAddress) {
+    showResult('Please connect your wallet first', 'error');
+    return;
+  }
 
-  document.getElementById('balBar').classList.remove('show');
-  document.getElementById('swapBtn').classList.remove('connected');
-  document.getElementById('btnPulse').style.display = 'inline-block';
-  document.getElementById('btnText').textContent = 'Connect Wallet to Swap';
-  document.getElementById('maxBtn').style.display = 'none';
-  document.getElementById('afterSw').classList.remove('show');
-  calcOutput();
+  if (isPaused) {
+    showResult('G1Flare is currently paused', 'error');
+    return;
+  }
+
+  try {
+    setButtonState('quoting');
+
+    const amountIn = ethers.parseUnits(toAmountString(amount), 6);
+    const netAmount = amountIn - (amountIn * FEE_BPS / 10000n);
+
+    const quoterIface = new ethers.Interface(QUOTER_ABI);
+    const quoteData = quoterIface.encodeFunctionData('quoteExactInputSingle', [{
+      tokenIn: ADDRESSES.USDT0,
+      tokenOut: ADDRESSES.WFLR,
+      amountIn: netAmount,
+      fee: 500,
+      sqrtPriceLimitX96: 0
+    }]);
+
+    const result = await provider.call({ to: ADDRESSES.QuoterV2, data: quoteData });
+    const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', result);
+    const wflrOut = decoded[0];
+    const minOut = wflrOut * BigInt(100 - slippage) / 100n;
+    const deadline = Math.floor(Date.now() / 1000) + 1200;
+
+    const module2Iface = new ethers.Interface(MODULE2_ABI);
+    const swapData = module2Iface.encodeFunctionData('swapAndStake', [
+      netAmount,
+      minOut,
+      userAddress,
+      deadline
+    ]);
+
+    setButtonState('checking');
+    const allowance = await usdt0Contract.allowance(userAddress, ADDRESSES.Module1);
+
+    if (allowance < amountIn) {
+      setButtonState('approving');
+      const approveTx = await usdt0Contract.approve(ADDRESSES.Module1, amountIn);
+      await approveTx.wait();
+    }
+
+    setButtonState('swapping');
+    const depositTx = await module1Contract.depositDirect(amountIn, swapData);
+    await depositTx.wait();
+
+    setButtonState('success');
+    await refreshBalances();
+    showResult('Success! Swap confirmed. Check your sFLR balance.', 'success');
+
+    setTimeout(() => setButtonState('idle'), 3000);
+  } catch (e) {
+    console.error('Swap failed:', e);
+    setButtonState('idle');
+    const reason = e.reason || e.message || 'Unknown error';
+    showResult('Swap failed: ' + reason, 'error');
+  }
 }
 
-fetchRates();
-startCountdown();
+function setButtonState(state) {
+  const states = {
+    idle: { text: 'Swap', disabled: !userAddress || !els.amountInput.value || parseFloat(els.amountInput.value) < MIN_AMOUNT },
+    quoting: { text: '<span class="spinner"></span> Quoting…', disabled: true },
+    checking: { text: '<span class="spinner"></span> Checking…', disabled: true },
+    approving: { text: '<span class="spinner"></span> Approving…', disabled: true },
+    swapping: { text: '<span class="spinner"></span> Swapping…', disabled: true },
+    success: { text: '✓ Success!', disabled: true }
+  };
+
+  const s = states[state] || states.idle;
+  els.btnStatus.innerHTML = s.text;
+  els.swapBtn.disabled = s.disabled;
+}
+
+function showResult(msg, type) {
+  els.resultMsg.textContent = msg;
+  els.resultMsg.className = 'result-msg visible ' + type;
+  setTimeout(() => {
+    els.resultMsg.classList.remove('visible');
+  }, 8000);
+}
+
+init().catch(console.error);
 </script>
 </body>
 </html>
