@@ -32,6 +32,7 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
   --shadow: 0 4px 12px rgba(0,0,0,0.1);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-xl: 0 12px 40px rgba(0,0,0,0.15);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -41,553 +42,312 @@ body {
   line-height: 1.5;
   min-height: 100vh;
 }
-.app {
-  display: flex;
-  min-height: 100vh;
+.hero-band {
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+  padding: 72px 24px 64px;
+  text-align: center;
 }
-.sidebar {
-  width: 280px;
-  background: var(--white);
-  border-right: 1px solid var(--gray-200);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  position: fixed;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 10;
+.hero-band::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(230,32,88,0.35) 0%, rgba(230,32,88,0.1) 40%, transparent 70%);
+  pointer-events: none;
 }
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 20px;
-  color: var(--dark);
-  letter-spacing: -0.5px;
+.hero-band::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(230,32,88,0.3) 50%, transparent 100%);
 }
-.sidebar-brand .logo-dot {
-  width: 10px;
-  height: 10px;
-  background: var(--primary);
-  border-radius: 50%;
-  display: inline-block;
+.hero-band-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.hero-wordmark { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; }
+.hero-wordmark .g1 { color: var(--white); }
+.hero-wordmark .flare { color: var(--primary); }
+.hero-headline { font-size: 24px; font-weight: 600; color: var(--white); line-height: 1.4; margin-bottom: 12px; letter-spacing: -0.3px; }
+.hero-subline { font-size: 15px; color: rgba(255,255,255,0.65); font-weight: 400; line-height: 1.6; max-width: 560px; margin: 0 auto 28px; }
+.hero-trust { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+.hero-trust .trust-sep { margin: 0 12px; opacity: 0.4; }
+.routes-strip {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  padding: 20px 24px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
 }
-.route-card {
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius);
-  padding: 16px;
-}
-.route-card .route-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--gray-500);
-  margin-bottom: 12px;
-}
-.route-active {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  background: var(--white);
-  border: 2px solid var(--primary);
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-}
-.route-active .route-arrow {
-  color: var(--primary);
-  font-weight: 700;
-}
-.route-active .route-name {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--gray-800);
-}
-.route-active .route-badge {
-  margin-left: auto;
-  background: var(--primary);
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 20px;
-  text-transform: uppercase;
-}
-.token-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--gray-100);
-}
-.route-future {
-  font-size: 13px;
-  color: var(--gray-500);
-  padding: 8px 0;
-  border-top: 1px dashed var(--gray-300);
-  margin-top: 8px;
-}
-.firelight-card {
+.route-item { display: flex; align-items: center; gap: 10px; }
+.route-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--gray-100); }
+.route-item .route-name { font-size: 14px; font-weight: 600; color: var(--gray-700); }
+.route-item .route-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
+.route-item .route-pill.live { background: var(--primary); color: white; }
+.route-item .route-pill.soon { background: var(--gray-100); color: var(--gray-500); }
+.fl-ribbon {
   background: linear-gradient(135deg, var(--dark) 0%, var(--dark-lighter) 100%);
-  border-radius: var(--radius);
-  padding: 16px;
-  color: white;
+  border-bottom: 1px solid rgba(230,32,88,0.3);
+  padding: 16px 24px;
+  text-align: center;
 }
-.firelight-card h4 {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  opacity: 0.9;
+.fl-ribbon .fl-text { font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -0.1px; }
+.fl-ribbon .fl-text .fl-accent { color: var(--primary); }
+.fl-ribbon .fl-sub { font-size: 12.5px; color: rgba(255,255,255,0.6); font-weight: 500; margin-top: 3px; }
+@media (max-width: 700px) { .fl-ribbon .fl-text { font-size: 14px; } }
+.app-body { display: flex; max-width: 1200px; margin: 0 auto; padding: 32px 24px; gap: 32px; justify-content: center; }
+.left-column { width: 280px; flex-shrink: 0; }
+.center-column { flex: 1; max-width: 560px; display: flex; flex-direction: column; align-items: center; }
+.yield-panel { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 20px; }
+.yield-panel h3 { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 20px; }
+.yield-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+.yield-row:last-child { border-bottom: none; }
+.yield-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.yield-dot.live { background: var(--success); }
+.yield-dot.coming { background: var(--warning); }
+.yield-info { flex: 1; }
+.venue-logo { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: var(--gray-100); flex-shrink: 0; margin-top: 1px; }
+.yield-info .venue-name { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.yield-info .venue-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+.swap-card {
+  background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-xl);
+  padding: 32px; border: 1px solid var(--gray-200); width: 100%; max-width: 560px;
 }
-.firelight-card p {
-  font-size: 12px;
-  opacity: 0.7;
-  line-height: 1.5;
+.swap-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.swap-card-header h2 { font-size: 18px; font-weight: 700; color: var(--gray-800); }
+.live-badge {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  color: var(--success); background: rgba(64,192,87,0.1); padding: 4px 10px; border-radius: 20px;
 }
-.main {
-  margin-left: 280px;
-  flex: 1;
-  padding: 40px 48px;
-  max-width: 720px;
+.live-badge .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+.live-badge.error { color: var(--error); background: rgba(250,82,82,0.1); cursor: pointer; }
+.live-badge.error .live-dot { background: var(--error); animation: none; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
+.input-wrap {
+  display: flex; align-items: center; background: var(--gray-50);
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm); padding: 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.hero {
-  margin-bottom: 32px;
+.input-wrap:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(230,32,88,0.15); }
+.input-wrap input {
+  flex: 1; border: none; background: transparent; padding: 12px 16px;
+  font-size: 18px; font-weight: 600; color: var(--gray-800); outline: none; font-family: inherit;
 }
-.hero h1 {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  color: var(--dark);
-  margin-bottom: 8px;
+.input-wrap input::placeholder { color: var(--gray-400); font-weight: 400; }
+.input-token {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--white);
+  border-radius: var(--radius-sm); font-weight: 600; font-size: 14px; color: var(--gray-700); border: 1px solid var(--gray-200);
 }
-.hero h1 .flare-accent {
-  color: var(--primary);
+.input-token img { width: 20px; height: 20px; border-radius: 50%; }
+.min-notice { font-size: 12px; color: var(--gray-500); margin-top: 6px; display: flex; justify-content: space-between; }
+.min-notice .error-text { color: var(--error); font-weight: 600; display: none; }
+.min-notice .error-text.visible { display: block; }
+.quote-section { background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px; border: 1px solid var(--gray-200); }
+.quote-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-200); }
+.quote-row:last-child { border-bottom: none; }
+.quote-row .quote-label { font-size: 13px; color: var(--gray-600); }
+.quote-row .quote-value { font-size: 14px; font-weight: 600; color: var(--gray-800); font-family: 'SF Mono', Monaco, monospace; }
+.quote-row .quote-value.muted { color: var(--gray-400); }
+.quote-row .quote-value.primary { color: var(--primary); font-size: 18px; }
+.sflr-rate { font-size: 12px; color: var(--gray-500); margin-top: 8px; font-style: italic; }
+.sflr-rate.hidden { display: none; }
+.slippage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.slippage-row label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+.slippage-options { display: flex; gap: 6px; }
+.slippage-btn {
+  padding: 6px 12px; border: 1px solid var(--gray-300); background: var(--white);
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
 }
-.hero p {
-  font-size: 17px;
-  color: var(--gray-600);
-  font-weight: 400;
+.slippage-btn:hover { border-color: var(--primary); color: var(--primary); }
+.slippage-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.wallet-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  padding: 12px 16px; background: var(--gray-50); border-radius: var(--radius-sm); border: 1px solid var(--gray-200);
 }
+.wallet-info { display: flex; align-items: center; gap: 8px; }
+.wallet-info img { width: 20px; height: 20px; }
+.wallet-info .address { font-size: 14px; font-weight: 600; color: var(--gray-700); font-family: 'SF Mono', Monaco, monospace; }
+.wallet-balances { font-size: 12px; color: var(--gray-500); }
+.connect-btn {
+  padding: 8px 16px; background: var(--white); border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-700);
+  cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 6px;
+}
+.connect-btn:hover { border-color: var(--primary); color: var(--primary); }
+.connect-btn img { width: 16px; height: 16px; }
+.swap-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; font-family: inherit; position: relative; overflow: hidden;
+}
+.swap-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-xl); }
+.swap-btn:active:not(:disabled) { transform: translateY(0); }
+.swap-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.swap-btn .btn-status { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.result-msg { margin-top: 16px; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; display: none; }
+.result-msg.visible { display: block; }
+.result-msg.success { background: rgba(64,192,87,0.1); color: var(--success); border: 1px solid rgba(64,192,87,0.2); }
+.result-msg.error { background: rgba(250,82,82,0.1); color: var(--error); border: 1px solid rgba(250,82,82,0.2); }
 .status-banner {
   display: none;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: var(--warning);
-  color: var(--dark);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 20px;
-}
-.status-banner.visible {
-  display: flex;
-}
-.status-banner .banner-dot {
-  width: 8px;
-  height: 8px;
+  gap: 12px;
+  padding: 14px 18px;
   background: var(--dark);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.swap-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 28px;
-  border: 1px solid var(--gray-200);
-}
-.swap-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-.swap-card-header h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--gray-800);
-}
-.live-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  border: 1px solid var(--primary);
+  color: var(--white);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
   font-weight: 600;
-  color: var(--success);
-  background: rgba(64,192,87,0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-.live-badge .live-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--success);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-.live-badge.error {
-  color: var(--error);
-  background: rgba(250,82,82,0.1);
-  cursor: pointer;
-}
-.live-badge.error .live-dot {
-  background: var(--error);
-  animation: none;
-}
-.input-group {
+  letter-spacing: -0.1px;
   margin-bottom: 20px;
-}
-.input-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-600);
-  margin-bottom: 8px;
-}
-.input-wrap {
-  display: flex;
-  align-items: center;
-  background: var(--gray-50);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  padding: 4px;
-  transition: border-color 0.2s;
-}
-.input-wrap:focus-within {
-  border-color: var(--primary);
-}
-.input-wrap input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 12px 16px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-800);
-  outline: none;
-  font-family: inherit;
-}
-.input-wrap input::placeholder {
-  color: var(--gray-400);
-  font-weight: 400;
-}
-.input-token {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: var(--white);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--gray-700);
-  border: 1px solid var(--gray-200);
-}
-.input-token img {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-}
-.min-notice {
-  font-size: 12px;
-  color: var(--gray-500);
-  margin-top: 6px;
-  display: flex;
-  justify-content: space-between;
-}
-.min-notice .error-text {
-  color: var(--error);
-  font-weight: 600;
-  display: none;
-}
-.min-notice .error-text.visible {
-  display: block;
-}
-.quote-section {
-  background: var(--gray-50);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  margin-bottom: 20px;
-  border: 1px solid var(--gray-200);
-}
-.quote-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--gray-200);
-}
-.quote-row:last-child {
-  border-bottom: none;
-}
-.quote-row .quote-label {
-  font-size: 13px;
-  color: var(--gray-600);
-}
-.quote-row .quote-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-800);
-  font-family: 'SF Mono', Monaco, monospace;
-}
-.quote-row .quote-value.muted {
-  color: var(--gray-400);
-}
-.sflr-rate {
-  font-size: 12px;
-  color: var(--gray-500);
-  margin-top: 8px;
-  font-style: italic;
-}
-.sflr-rate.hidden {
-  display: none;
-}
-.slippage-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.slippage-row label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-600);
-}
-.slippage-options {
-  display: flex;
-  gap: 6px;
-}
-.slippage-btn {
-  padding: 6px 12px;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-600);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-}
-.slippage-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.slippage-btn.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-.wallet-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 12px 16px;
-  background: var(--gray-50);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--gray-200);
-}
-.wallet-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.wallet-info img {
-  width: 20px;
-  height: 20px;
-}
-.wallet-info .address {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gray-700);
-  font-family: 'SF Mono', Monaco, monospace;
-}
-.wallet-balances {
-  font-size: 12px;
-  color: var(--gray-500);
-}
-.connect-btn {
-  padding: 8px 16px;
-  background: var(--white);
-  border: 1px solid var(--gray-300);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gray-700);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.connect-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.connect-btn img {
-  width: 16px;
-  height: 16px;
-}
-.swap-btn {
   width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
-  position: relative;
-  overflow: hidden;
 }
-.swap-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
-}
-.swap-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-.swap-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-.swap-btn .btn-status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.result-msg {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 500;
-  display: none;
-}
-.result-msg.visible {
-  display: block;
-}
-.result-msg.success {
-  background: rgba(64,192,87,0.1);
-  color: var(--success);
-  border: 1px solid rgba(64,192,87,0.2);
-}
-.result-msg.error {
-  background: rgba(250,82,82,0.1);
-  color: var(--error);
-  border: 1px solid rgba(250,82,82,0.2);
-}
-.site-footer {
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid var(--gray-200);
-  text-align: center;
-  font-size: 13px;
-  color: var(--gray-500);
-}
-.site-footer .footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 12px;
-}
-.site-footer a {
-  color: var(--gray-600);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.15s;
-}
-.site-footer a:hover {
-  color: var(--primary);
+.status-banner.visible { display: flex; }
+.status-banner .banner-dot { width: 8px; height: 8px; background: var(--warning); border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
+.site-footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--gray-200); text-align: center; font-size: 13px; color: var(--gray-500); width: 100%; }
+.site-footer .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; }
+.site-footer a { color: var(--gray-600); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+.site-footer a:hover { color: var(--primary); }
+.monogram {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--gray-200);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--gray-600);
 }
 @media (max-width: 900px) {
-  .sidebar { display: none; }
-  .main { margin-left: 0; padding: 24px; max-width: 100%; }
-  .hero h1 { font-size: 32px; }
-}
-.monogram {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--gray-200);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--gray-600);
+  .app-body { flex-direction: column; align-items: center; }
+  .left-column { width: 100%; max-width: 560px; order: 2; }
+  .center-column { width: 100%; order: 1; }
+  .swap-card { max-width: 100%; }
+  .hero-band { padding: 48px 16px 40px; }
+  .hero-wordmark { font-size: 42px; }
+  .hero-headline { font-size: 18px; }
+  .hero-subline { font-size: 14px; }
+  .hero-trust { font-size: 12px; }
+  .hero-trust .trust-sep { margin: 0 8px; }
+  .routes-strip { gap: 16px; padding: 16px; }
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <span class="logo-dot"></span>
-      G1FLARE
+
+<div class="hero-band">
+  <div class="hero-band-content">
+    <div class="hero-wordmark"><span class="g1">G1</span><span class="flare">FLARE</span></div>
+    <div class="hero-headline">The only ramp that mints sFLR at the staking rate.</div>
+    <div class="hero-subline">USDT in, staked Flare out — one signature, no sFLR pool slippage. Your gateway to Flare yield.</div>
+    <div class="hero-trust">
+      <span>Non-custodial · Atomic — settles fully or reverts fully</span>
+      <span class="trust-sep">·</span>
+      <span>0.05% flat fee</span>
+      <span class="trust-sep">·</span>
+      <span>Mints via Sceptre, swaps via SparkDEX</span>
     </div>
-    <div class="route-card">
-      <div class="route-label">Active Route</div>
-      <div class="route-active">
-        <img class="token-icon" src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png" alt="USDT" onerror="this.style.display='none';this.parentNode.querySelector('.monogram').style.display='flex';">
-        <div class="monogram" style="display:none">U</div>
-        <span class="route-arrow">→</span>
-        <div style="position:relative">
-          <img class="token-icon" src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/flare/info/logo.png" alt="sFLR" onerror="this.style.display='none';this.parentNode.querySelector('.monogram').style.display='flex';">
-          <div class="monogram" style="display:none">S</div>
-          <span style="position:absolute;bottom:-2px;right:-4px;background:var(--primary);color:white;font-size:9px;font-weight:700;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;">s</span>
+  </div>
+</div>
+
+<div class="routes-strip">
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png" alt="USDT" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='U';">
+    <span class="route-name">USDT</span>
+    <span class="route-pill live">Live</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/info/logo.png" alt="Ethereum" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='E';">
+    <span class="route-name">ETH</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/solana/info/logo.png" alt="Solana" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='S';">
+    <span class="route-name">SOL</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/binance/info/logo.png" alt="BNB" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='B';">
+    <span class="route-name">BNB</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="RLUSD" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='R';">
+    <span class="route-name">RLUSD</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+  <div class="route-item">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="XRP" onerror="this.onerror=function(){this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='X';};this.src='https://cryptologos.cc/logos/xrp-xrp-logo.png';">
+    <span class="route-name">XRP → stXRP</span>
+    <span class="route-pill soon">Soon</span>
+  </div>
+</div>
+
+<div class="fl-ribbon">
+  <div class="fl-text">Built for <span class="fl-accent">Firelight</span> — turn USDT into collateral-grade sFLR today.</div>
+  <div class="fl-sub">stXRP route in development for Phase 2 underwriting (July 2026)</div>
+</div>
+
+<div class="app-body">
+
+  <div class="left-column">
+    <div class="yield-panel">
+      <h3>What sFLR unlocks</h3>
+      <div style="font-size:13px;font-style:italic;color:var(--gray-500);margin:-12px 0 14px;">G1Flare is your entry. These are the doors.</div>
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=sceptre.fi&sz=64" alt="Sceptre" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>S</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Sceptre</div>
+          <div class="venue-desc">Liquid staking rewards, automatic from day one.</div>
         </div>
-        <span class="route-name">USDT → sFLR</span>
-        <span class="route-badge">Live</span>
       </div>
-      <div class="route-future">
-        More routes coming: stXRP → Firelight · SOL · ETH · FAssets
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=spectra.finance&sz=64" alt="Spectra" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>SP</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Spectra</div>
+          <div class="venue-desc">Fixed yield (PT) or LP your sFLR.</div>
+        </div>
       </div>
+      <div class="yield-row">
+        <span class="yield-dot live"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=sparkdex.ai&sz=64" alt="SparkDEX V4" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>SD</div>'">
+        <div class="yield-info">
+          <div class="venue-name">SparkDEX V4</div>
+          <div class="venue-desc">Single-sided ALM vaults (ICHI/Steer) + rFLR emissions.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot coming"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=firelight.finance&sz=64" alt="Firelight" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>F</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Firelight</div>
+          <div class="venue-desc">Insurance cover collateral. Phase 2 July 2026.</div>
+        </div>
+      </div>
+      <div class="yield-row">
+        <span class="yield-dot coming"></span>
+        <img class="venue-logo" src="https://www.google.com/s2/favicons?domain=upshift.finance&sz=64" alt="Upshift" onerror="this.outerHTML='<div class=&quot;monogram&quot; style=&quot;width:20px;height:20px;font-size:9px&quot;>U</div>'">
+        <div class="yield-info">
+          <div class="venue-name">Upshift</div>
+          <div class="venue-desc">XRP-side vaults (earnXRP, MXRPY); stXRP route coming to G1Flare.</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:14px;padding-top:12px;border-top:1px dashed var(--gray-300);line-height:1.6;">In development: <strong style="color:var(--gray-700)">XRP → FXRP → stXRP</strong> — the one-signature pipeline from idle XRP to Firelight-staked yield.</div>
     </div>
-    <div class="firelight-card">
-      <h4>What sFLR unlocks</h4>
-      <p style="margin-bottom:10px"><strong style="opacity:1;color:#fff">Staking yield — automatic.</strong><br>sFLR earns Sceptre staking rewards from the moment it lands.</p>
-      <p style="margin-bottom:10px"><strong style="opacity:1;color:#fff">Spectra — live now.</strong><br>Double-dip: fixed yield via PT or LP your sFLR for extra return.</p>
-      <p><strong style="opacity:1;color:#fff">Firelight — July 2026.</strong><br>Deploy sFLR as insurance cover collateral. No XRP required.</p>
-    </div>
-  </aside>
-  <main class="main">
-    <div class="hero">
-      <h1>G1<span class="flare-accent">FLARE</span></h1>
-      <p>From USDT to staked Flare in one signature. One ramp — three yield doors.</p>
-    </div>
+  </div>
+
+  <div class="center-column">
+
     <div class="status-banner" id="pausedBanner">
       <span class="banner-dot"></span>
-      <span>G1Flare is in pre-launch — swaps open soon</span>
+      <span>Pre-launch — contracts deployed and verified on Flare mainnet. Swaps open soon.</span>
     </div>
+
     <div class="swap-card">
       <div class="swap-card-header">
         <h2>Swap</h2>
@@ -596,6 +356,7 @@ body {
           <span id="liveText">Live · on-chain</span>
         </div>
       </div>
+
       <div class="input-group">
         <label>You send</label>
         <div class="input-wrap">
@@ -610,6 +371,7 @@ body {
           <span class="error-text" id="minError">Minimum 50 USDT required</span>
         </div>
       </div>
+
       <div class="quote-section">
         <div class="quote-row">
           <span class="quote-label">You receive (est.)</span>
@@ -629,6 +391,7 @@ body {
         </div>
         <div class="sflr-rate hidden" id="sflrRate"></div>
       </div>
+
       <div class="slippage-row">
         <label>Slippage tolerance</label>
         <div class="slippage-options">
@@ -638,17 +401,43 @@ body {
           <button class="slippage-btn" data-slippage="5">5%</button>
         </div>
       </div>
+
       <div class="wallet-row" id="walletRow">
         <button class="connect-btn" id="connectBtn">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
           Connect Wallet
         </button>
       </div>
+
       <button class="swap-btn" id="swapBtn" disabled>
         <span class="btn-status" id="btnStatus">Enter amount</span>
       </button>
+
       <div class="result-msg" id="resultMsg"></div>
     </div>
+
+    <div class="hiw-section">
+      <h3>How it works</h3>
+      <div class="hiw-steps">
+        <div class="hiw-step">
+          <div class="step-num">1</div>
+          <div class="step-title">Approve</div>
+          <div class="step-desc">Authorize the exact USDT amount. Nothing else, nothing unlimited.</div>
+        </div>
+        <div class="hiw-step">
+          <div class="step-num">2</div>
+          <div class="step-title">One signature</div>
+          <div class="step-desc">Your USDT swaps to WFLR on SparkDEX and mints sFLR via Sceptre — atomically. If anything fails, everything reverts.</div>
+        </div>
+        <div class="hiw-step">
+          <div class="step-num">3</div>
+          <div class="step-title">sFLR lands</div>
+          <div class="step-desc">Staked Flare arrives in your wallet, earning from the first block. Firelight-ready collateral (Phase 2 July 2026).</div>
+        </div>
+      </div>
+      <div class="hiw-note">Contracts hold nothing between transactions — verified live on <a href="https://flarescan.com/address/0x9f17a5d7CD90181a34A2011e900B440D71E2C011" target="_blank" rel="noopener">Flarescan</a>.</div>
+    </div>
+
     <footer class="site-footer">
       <div class="footer-links">
         <a href="https://flare.network" target="_blank" rel="noopener">Flare Network</a>
@@ -657,8 +446,9 @@ body {
       </div>
       <p>Powered by LayerZero USDT0 · Native USDT · No wrapped tokens</p>
     </footer>
-  </main>
+  </div>
 </div>
+
 <script>
 const ADDRESSES = {
   Module1: '0x9f17a5d7CD90181a34A2011e900B440D71E2C011',
@@ -713,6 +503,8 @@ let isPaused = false;
 let slippage = 3;
 let quoteTimer = null;
 let refreshTimer = null;
+let tickerTimer = null;
+let isErrorState = false;
 
 const els = {
   amountInput: document.getElementById('amountInput'),
@@ -754,8 +546,9 @@ async function init() {
     console.error('Failed to check paused state:', e);
   }
 
-  await quoteAmount(10);
+  await quoteRateOnly();
   refreshTimer = setInterval(autoRefresh, AUTO_REFRESH_MS);
+  tickerTimer = setInterval(updateLiveTicker, 1000);
 
   els.amountInput.addEventListener('input', debounceQuote);
   els.connectBtn.addEventListener('click', connectWallet);
@@ -770,6 +563,79 @@ async function init() {
   });
 }
 
+function updateLiveTicker() {
+  if (isErrorState || lastQuoteTime === 0) return;
+  const seconds = Math.floor((Date.now() - lastQuoteTime) / 1000);
+  els.liveText.textContent = `Live · ${seconds}s ago`;
+}
+
+async function fetchSflrRate() {
+  let sflrRateText = '';
+  let pooledRate = 0n;
+  try {
+    pooledRate = await sflrContract.getPooledFlrByShares(ethers.parseEther('1'));
+    const sflrFlr = ethers.formatEther(pooledRate);
+    sflrRateText = `1 sFLR ≈ ${parseFloat(sflrFlr).toFixed(4)} FLR`;
+  } catch (e) {}
+  return { pooledRate, sflrRateText };
+}
+
+async function quoteRateOnly() {
+  try {
+    const quoterIface = new ethers.Interface(QUOTER_ABI);
+    const quoteData = quoterIface.encodeFunctionData('quoteExactInputSingle', [{
+      tokenIn: ADDRESSES.USDT0,
+      tokenOut: ADDRESSES.WFLR,
+      amountIn: ethers.parseUnits('1', 6),
+      fee: 500,
+      sqrtPriceLimitX96: 0
+    }]);
+
+    const result = await provider.call({
+      to: ADDRESSES.QuoterV2,
+      data: quoteData
+    });
+
+    const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', result);
+    const wflrOut = decoded[0];
+    const rate = parseFloat(ethers.formatEther(wflrOut));
+
+    const { pooledRate, sflrRateText } = await fetchSflrRate();
+
+    currentQuote = {
+      rate: rate,
+      pooledRate: pooledRate,
+      sflrRateText: sflrRateText,
+      timestamp: Date.now()
+    };
+
+    lastQuoteTime = Date.now();
+    isErrorState = false;
+    updateRateOnlyDisplay();
+  } catch (e) {
+    console.error('Rate-only quote failed:', e);
+    isErrorState = true;
+    updateLiveBadge(false);
+  }
+}
+
+function updateRateOnlyDisplay() {
+  if (!currentQuote) return;
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
+  els.quoteRate.classList.remove('muted');
+  if (currentQuote.sflrRateText) {
+    els.sflrRate.textContent = currentQuote.sflrRateText;
+    els.sflrRate.classList.remove('hidden');
+  }
+  els.quoteOut.textContent = '—';
+  els.quoteOut.classList.add('muted');
+  els.quoteOut.classList.remove('primary');
+  els.quoteFee.textContent = '—';
+  els.quoteFee.classList.add('muted');
+  els.quoteNet.textContent = '—';
+  els.quoteNet.classList.add('muted');
+}
+
 function debounceQuote() {
   clearTimeout(quoteTimer);
   const val = parseFloat(els.amountInput.value);
@@ -777,7 +643,11 @@ function debounceQuote() {
     els.minError.classList.remove('visible');
   }
   quoteTimer = setTimeout(() => {
-    const amount = parseFloat(els.amountInput.value) || 10;
+    const amount = parseFloat(els.amountInput.value);
+    if (!amount || amount <= 0) {
+      quoteRateOnly();
+      return;
+    }
     quoteAmount(amount);
   }, DEBOUNCE_MS);
 }
@@ -804,13 +674,7 @@ async function quoteAmount(amount) {
     const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', result);
     const wflrOut = decoded[0];
 
-    let sflrRateText = '';
-    let pooledRate = 0n;
-    try {
-      pooledRate = await sflrContract.getPooledFlrByShares(ethers.parseEther('1'));
-      const sflrFlr = ethers.formatEther(pooledRate);
-      sflrRateText = `1 sFLR ≈ ${parseFloat(sflrFlr).toFixed(4)} FLR`;
-    } catch (e) {}
+    const { pooledRate, sflrRateText } = await fetchSflrRate();
 
     currentQuote = {
       amountIn: amountIn,
@@ -818,26 +682,36 @@ async function quoteAmount(amount) {
       wflrOut: wflrOut,
       pooledRate: pooledRate,
       sflrRateText: sflrRateText,
+      rate: parseFloat(ethers.formatEther(wflrOut)) / parseFloat(ethers.formatUnits(netAmount, 6)),
       timestamp: Date.now()
     };
 
     lastQuoteTime = Date.now();
+    isErrorState = false;
     updateQuoteDisplay();
     updateLiveBadge(true);
   } catch (e) {
     console.error('Quote failed:', e);
+    isErrorState = true;
     updateLiveBadge(false);
     clearQuoteDisplay();
   }
 }
 
 async function autoRefresh() {
-  const amount = parseFloat(els.amountInput.value) || 10;
-  await quoteAmount(amount);
+  const amount = parseFloat(els.amountInput.value);
+  if (!amount || amount <= 0) {
+    await quoteRateOnly();
+  } else {
+    await quoteAmount(amount);
+  }
 }
 
 function updateQuoteDisplay() {
-  if (!currentQuote) return;
+  if (!currentQuote || !currentQuote.wflrOut) {
+    updateRateOnlyDisplay();
+    return;
+  }
 
   const wflrFormatted = ethers.formatEther(currentQuote.wflrOut);
   const feeFormatted = ethers.formatUnits(currentQuote.amountIn - currentQuote.netAmount, 6);
@@ -851,9 +725,9 @@ function updateQuoteDisplay() {
     els.quoteOut.textContent = `${parseFloat(wflrFormatted).toFixed(4)} WFLR (staked to sFLR)`;
   }
   els.quoteOut.classList.remove('muted');
+  els.quoteOut.classList.add('primary');
 
-  const rate = parseFloat(wflrFormatted) / parseFloat(netFormatted);
-  els.quoteRate.textContent = `1 USDT ≈ ${rate.toFixed(4)} FLR`;
+  els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(4)} FLR`;
   els.quoteRate.classList.remove('muted');
 
   els.quoteFee.textContent = `${parseFloat(feeFormatted).toFixed(4)} USDT`;
@@ -882,6 +756,7 @@ function updateQuoteDisplay() {
 function clearQuoteDisplay() {
   els.quoteOut.textContent = '—';
   els.quoteOut.classList.add('muted');
+  els.quoteOut.classList.remove('primary');
   els.quoteRate.textContent = '—';
   els.quoteRate.classList.add('muted');
   els.quoteFee.textContent = '—';
