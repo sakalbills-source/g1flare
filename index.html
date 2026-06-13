@@ -120,6 +120,21 @@ body {
 .faq-item:first-of-type { border-top: none; margin-top: 8px; }
 .faq-q { font-weight: 700; color: var(--gray-800); margin-bottom: 6px; font-size: 15px; }
 .faq-a { color: var(--gray-600); font-size: 14px; line-height: 1.55; }
+/* Wallet picker */
+.wallet-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.wallet-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--gray-200);
+  background: var(--white); border-radius: 12px; cursor: pointer;
+  font-size: 15px; font-weight: 600; color: var(--gray-800);
+  font-family: inherit; transition: border-color 0.15s, transform 0.1s;
+}
+.wallet-option:hover { border-color: var(--primary); transform: translateY(-1px); }
+.wallet-option img { width: 26px; height: 26px; border-radius: 6px; object-fit: contain; }
+.wallet-dot { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-300); flex-shrink: 0; }
+.wallet-dot.wc { background: #3b99fc; }
+.wallet-empty { font-size: 13px; color: var(--gray-500); padding: 10px 2px; line-height: 1.5; }
+.wc-status { font-size: 13px; color: var(--gray-600); margin-top: 12px; text-align: center; min-height: 18px; }
 @keyframes heartbeat {
   0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(230,32,88,0.55); }
   14%  { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(230,32,88,0.25); }
@@ -262,9 +277,12 @@ body {
   padding: 8px 16px; background: var(--white); border: 1px solid var(--gray-300);
   border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-700);
   cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; gap: 6px;
+  outline: 1.5px solid var(--primary); outline-offset: 2px;
+  animation: heartbeat 1.6s ease-in-out infinite;
 }
 .connect-btn:hover { border-color: var(--primary); color: var(--primary); }
 .connect-btn img { width: 16px; height: 16px; }
+.connect-btn svg { width: 16px; height: 16px; }
 .swap-btn {
   width: 100%; padding: 16px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -496,7 +514,7 @@ body {
 
       <div class="wallet-row" id="walletRow">
         <button class="connect-btn" id="connectBtn">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6.5C4 5.12 5.12 4 6.5 4H17a1 1 0 0 1 0 2H6.5a.5.5 0 0 0 0 1H18a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6.5Zm2 2.5v8a.5.5 0 0 0 .5.5H18a.5.5 0 0 0 .5-.5v-2H15a2.5 2.5 0 0 1 0-5h3.5V9.5A.5.5 0 0 0 18 9H6Zm12.5 2.5H15a1 1 0 0 0 0 2h3.5v-2Z" fill="currentColor"/><circle cx="16" cy="12.5" r="0.9" fill="var(--white)"/></svg>
           Connect Wallet
         </button>
       </div>
@@ -589,6 +607,10 @@ const SFLR_ABI = [
 ];
 
 let provider, signer, userAddress;
+let selectedProvider = null;
+let connectedWalletInfo = null;
+let discoveredWallets = [];
+let wcModal = null;
 let usdt0Contract, module1Contract, quoterContract, sflrContract;
 let currentQuote = null;
 let lastQuoteTime = 0;
@@ -624,6 +646,7 @@ function toAmountString(amount) {
 }
 
 async function init() {
+  setupWalletDiscovery();
   provider = new ethers.JsonRpcProvider(ADDRESSES.RPC);
   quoterContract = new ethers.Contract(ADDRESSES.QuoterV2, QUOTER_ABI, provider);
   sflrContract = new ethers.Contract(ADDRESSES.sFLR, SFLR_ABI, provider);
@@ -889,14 +912,104 @@ function updateLiveBadge(ok) {
   }
 }
 
-async function connectWallet() {
-  if (!window.ethereum) {
-    showResult('Please install MetaMask or a compatible wallet', 'error');
-    return;
+// ===== Wallet discovery (EIP-6963) + picker + WalletConnect =====
+const WC_PROJECT_ID = '7aceaa314aa98428f3d886ce318833e5';
+
+function setupWalletDiscovery() {
+  window.addEventListener('eip6963:announceProvider', (event) => {
+    const { info, provider } = event.detail;
+    if (!discoveredWallets.find(w => w.info.uuid === info.uuid)) {
+      discoveredWallets.push({ info, provider });
+    }
+  });
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+}
+
+function openWalletPicker() {
+  // re-request in case wallets injected late
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+  const list = document.getElementById('walletList');
+  list.innerHTML = '';
+
+  if (discoveredWallets.length === 0 && window.ethereum) {
+    // Fallback: a generic injected provider with no EIP-6963 announcement
+    discoveredWallets.push({
+      info: { uuid: 'injected', name: 'Browser Wallet', icon: '' },
+      provider: window.ethereum
+    });
   }
 
+  discoveredWallets.forEach(w => {
+    const btn = document.createElement('button');
+    btn.className = 'wallet-option';
+    btn.innerHTML =
+      (w.info.icon ? `<img src="${w.info.icon}" alt="">` : `<span class="wallet-dot"></span>`) +
+      `<span>${w.info.name}</span>`;
+    btn.onclick = () => { connectedWalletInfo = w.info; connectWithProvider(w.provider); };
+    list.appendChild(btn);
+  });
+
+  // WalletConnect option (mobile via QR)
+  const wcBtn = document.createElement('button');
+  wcBtn.className = 'wallet-option';
+  wcBtn.innerHTML = `<span class="wallet-dot wc"></span><span>WalletConnect (mobile)</span>`;
+  wcBtn.onclick = connectWalletConnect;
+  list.appendChild(wcBtn);
+
+  if (discoveredWallets.length === 0) {
+    const note = document.createElement('div');
+    note.className = 'wallet-empty';
+    note.textContent = 'No browser wallet detected — use WalletConnect for mobile, or install MetaMask/Rabby/Trust.';
+    list.appendChild(note);
+  }
+
+  document.getElementById('walletPickerOverlay').classList.add('open');
+}
+
+function closeWalletPicker() {
+  document.getElementById('walletPickerOverlay').classList.remove('open');
+}
+
+async function connectWalletConnect() {
+  const status = document.getElementById('wcStatus');
+  status.textContent = 'Loading WalletConnect…';
   try {
-    const browserProvider = new ethers.BrowserProvider(window.ethereum);
+    const { EthereumProvider } = await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0');
+    const wcProvider = await EthereumProvider.init({
+      projectId: WC_PROJECT_ID,
+      chains: [CHAIN_ID],
+      showQrModal: true,
+      rpcMap: { [CHAIN_ID]: ADDRESSES.RPC },
+      metadata: {
+        name: 'G1Flare',
+        description: 'USDT to sFLR ramp on Flare',
+        url: 'https://g1flare.com',
+        icons: ['https://g1flare.com/favicon.ico']
+      }
+    });
+    await wcProvider.connect();
+    status.textContent = '';
+    connectedWalletInfo = { name: 'WalletConnect', icon: '' };
+    await connectWithProvider(wcProvider);
+  } catch (e) {
+    console.error('WalletConnect failed:', e);
+    status.textContent = 'WalletConnect failed: ' + (e.message || e);
+  }
+}
+
+async function connectWallet() {
+  // Open the wallet picker instead of grabbing window.ethereum directly
+  openWalletPicker();
+}
+
+async function connectWithProvider(eip1193) {
+  if (!eip1193) {
+    showResult('No wallet provider selected', 'error');
+    return;
+  }
+  selectedProvider = eip1193;
+  try {
+    const browserProvider = new ethers.BrowserProvider(selectedProvider);
     await browserProvider.send('eth_requestAccounts', []);
     signer = await browserProvider.getSigner();
     userAddress = await signer.getAddress();
@@ -913,6 +1026,7 @@ async function connectWallet() {
 
     await refreshBalances();
     updateQuoteDisplay();
+    closeWalletPicker();
   } catch (e) {
     console.error('Connect failed:', e);
     showResult('Connection failed: ' + (e.message || e), 'error');
@@ -920,14 +1034,15 @@ async function connectWallet() {
 }
 
 async function switchChain() {
+  const prov = selectedProvider || window.ethereum;
   try {
-    await window.ethereum.request({
+    await prov.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: CHAIN_HEX }]
     });
   } catch (switchError) {
     if (switchError.code === 4902) {
-      await window.ethereum.request({
+      await prov.request({
         method: 'wallet_addEthereumChain',
         params: [{
           chainId: CHAIN_HEX,
@@ -945,9 +1060,12 @@ async function switchChain() {
 
 function updateWalletUI() {
   const shortAddr = userAddress.slice(0, 4) + '…' + userAddress.slice(-4);
+  const icon = (connectedWalletInfo && connectedWalletInfo.icon)
+    ? `<img src="${connectedWalletInfo.icon}" alt="" onerror="this.style.display='none'">`
+    : `<span class="wallet-dot" style="width:18px;height:18px;"></span>`;
   els.walletRow.innerHTML = `
     <div class="wallet-info">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="wallet" onerror="this.style.display='none'">
+      ${icon}
       <span class="address">${shortAddr}</span>
     </div>
     <div class="wallet-balances" id="walletBalances">Loading…</div>
@@ -1104,5 +1222,13 @@ function openFaq(){ document.getElementById('faqOverlay').classList.add('open');
 function closeFaq(){ document.getElementById('faqOverlay').classList.remove('open'); document.body.style.overflow=''; }
 document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeFaq(); });
 </script>
+<div class="faq-overlay" id="walletPickerOverlay" onclick="if(event.target===this)closeWalletPicker()">
+  <div class="faq-modal" style="max-width:380px;">
+    <button class="faq-close" onclick="closeWalletPicker()" aria-label="Close">&times;</button>
+    <h2>Connect a wallet</h2>
+    <div id="walletList" class="wallet-list"></div>
+    <div id="wcStatus" class="wc-status"></div>
+  </div>
+</div>
 </body>
 </html>
