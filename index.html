@@ -1057,7 +1057,58 @@ async function switchChain() {
   }
 }
 
+let idleTimer = null;
+let idleWarnTimer = null;
+const IDLE_MS = 5 * 60 * 1000;        // 5 minutes
+const IDLE_WARN_MS = 4.5 * 60 * 1000; // warn at 4:30
+
+function doAutoDisconnect() {
+  try {
+    if (selectedProvider && typeof selectedProvider.disconnect === 'function') {
+      selectedProvider.disconnect();
+    }
+  } catch (e) { console.warn('auto-disconnect:', e); }
+  signer = undefined;
+  userAddress = undefined;
+  selectedProvider = null;
+  connectedWalletInfo = null;
+  usdt0Contract = undefined;
+  module1Contract = undefined;
+  clearIdleTimer();
+  removeActivityListeners();
+  els.walletRow.innerHTML = `<button id="connectBtn" class="connect-btn">Connect Wallet</button>`;
+  const nb = document.getElementById('connectBtn');
+  if (nb) nb.addEventListener('click', connectWallet);
+  try { setButtonState('idle'); } catch (e) {}
+  try { showResult('Wallet disconnected after 5 minutes of inactivity.', 'success'); } catch (e) {}
+}
+
+function clearIdleTimer() {
+  if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  if (idleWarnTimer) { clearTimeout(idleWarnTimer); idleWarnTimer = null; }
+}
+
+function startIdleTimer() {
+  clearIdleTimer();
+  if (!userAddress) return;
+  idleWarnTimer = setTimeout(() => {
+    try { showResult('Disconnecting in 30s for security — move your mouse to stay connected.', 'error'); } catch (e) {}
+  }, IDLE_WARN_MS);
+  idleTimer = setTimeout(doAutoDisconnect, IDLE_MS);
+}
+
+function _onActivity() { if (userAddress) startIdleTimer(); }
+const _activityEvents = ['mousemove','mousedown','keydown','scroll','touchstart'];
+function addActivityListeners() {
+  _activityEvents.forEach(ev => window.addEventListener(ev, _onActivity, { passive: true }));
+}
+function removeActivityListeners() {
+  _activityEvents.forEach(ev => window.removeEventListener(ev, _onActivity, { passive: true }));
+}
+
 function updateWalletUI() {
+  addActivityListeners();
+  startIdleTimer();
   const shortAddr = userAddress.slice(0, 4) + '…' + userAddress.slice(-4);
   const icon = (connectedWalletInfo && connectedWalletInfo.icon)
     ? `<img src="${connectedWalletInfo.icon}" alt="" onerror="this.style.display='none'">`
