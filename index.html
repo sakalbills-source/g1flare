@@ -971,8 +971,8 @@ function closeWalletPicker() {
 }
 
 async function connectWalletConnect() {
-  const status = document.getElementById('wcStatus');
-  status.textContent = 'Loading WalletConnect…';
+  // Close our picker first so WalletConnect's own QR modal isn't stacked behind it
+  closeWalletPicker();
   try {
     const { EthereumProvider } = await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0');
     const wcProvider = await EthereumProvider.init({
@@ -988,12 +988,11 @@ async function connectWalletConnect() {
       }
     });
     await wcProvider.connect();
-    status.textContent = '';
     connectedWalletInfo = { name: 'WalletConnect', icon: '' };
     await connectWithProvider(wcProvider);
   } catch (e) {
     console.error('WalletConnect failed:', e);
-    status.textContent = 'WalletConnect failed: ' + (e.message || e);
+    showResult('WalletConnect failed: ' + (e.message || e), 'error');
   }
 }
 
