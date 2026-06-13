@@ -84,6 +84,16 @@ body {
 .route-item .route-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
 .route-item .route-pill.live { background: var(--primary); color: white; }
 .route-item .route-pill.soon { background: var(--gray-100); color: var(--gray-500); }
+.fl-ribbon {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-lighter) 100%);
+  border-bottom: 1px solid rgba(230,32,88,0.3);
+  padding: 16px 24px;
+  text-align: center;
+}
+.fl-ribbon .fl-text { font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -0.1px; }
+.fl-ribbon .fl-text .fl-accent { color: var(--primary); }
+.fl-ribbon .fl-sub { font-size: 12.5px; color: rgba(255,255,255,0.6); font-weight: 500; margin-top: 3px; }
+@media (max-width: 700px) { .fl-ribbon .fl-text { font-size: 14px; } }
 .app-body { display: flex; max-width: 1200px; margin: 0 auto; padding: 32px 24px; gap: 32px; justify-content: center; }
 .left-column { width: 280px; flex-shrink: 0; }
 .center-column { flex: 1; max-width: 560px; display: flex; flex-direction: column; align-items: center; }
@@ -270,10 +280,15 @@ body {
     <span class="route-pill soon">Soon</span>
   </div>
   <div class="route-item">
-    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="XRP" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='X';">
+    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="XRP" onerror="this.onerror=function(){this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='X';};this.src='https://cryptologos.cc/logos/xrp-xrp-logo.png';">
     <span class="route-name">XRP → stXRP</span>
     <span class="route-pill soon">Soon</span>
   </div>
+</div>
+
+<div class="fl-ribbon">
+  <div class="fl-text">Built for <span class="fl-accent">Firelight</span> — turn USDT into collateral-grade sFLR today.</div>
+  <div class="fl-sub">stXRP route in development for Phase 2 underwriting (July 2026)</div>
 </div>
 
 <div class="app-body">
