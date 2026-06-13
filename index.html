@@ -366,26 +366,6 @@ body {
     <span class="route-pill live">Live</span>
   </div>
   <div class="route-item">
-    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ethereum/info/logo.png" alt="Ethereum" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='E';">
-    <span class="route-name">ETH</span>
-    <span class="route-pill soon">Soon</span>
-  </div>
-  <div class="route-item">
-    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/solana/info/logo.png" alt="Solana" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='S';">
-    <span class="route-name">SOL</span>
-    <span class="route-pill soon">Soon</span>
-  </div>
-  <div class="route-item">
-    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/binance/info/logo.png" alt="BNB" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='B';">
-    <span class="route-name">BNB</span>
-    <span class="route-pill soon">Soon</span>
-  </div>
-  <div class="route-item">
-    <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="RLUSD" onerror="this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='R';">
-    <span class="route-name">RLUSD</span>
-    <span class="route-pill soon">Soon</span>
-  </div>
-  <div class="route-item">
     <img src="https://cdn.jsdelivr.net/gh/trustwallet/assets@master/blockchains/ripple/info/logo.png" alt="XRP" onerror="this.onerror=function(){this.style.display='none';this.parentNode.insertBefore(document.createElement('div'),this);this.previousSibling.className='monogram';this.previousSibling.textContent='X';};this.src='https://cryptologos.cc/logos/xrp-xrp-logo.png';">
     <span class="route-name">XRP → stXRP</span>
     <span class="route-pill soon">Soon</span>
@@ -451,7 +431,7 @@ body {
 
     <div class="status-banner" id="pausedBanner">
       <span class="banner-dot"></span>
-      <span>Pre-launch — contracts deployed and verified on Flare mainnet. Swaps open soon.</span>
+      <span>Live on Flare mainnet — USDT to sFLR, one signature.</span>
     </div>
 
     <div class="swap-card">
@@ -482,10 +462,6 @@ body {
         <div class="quote-row">
           <span class="quote-label">You receive (est.)</span>
           <span class="quote-value muted" id="quoteOut">—</span>
-        </div>
-        <div class="quote-row">
-          <span class="quote-label">FLR price</span>
-          <span class="quote-value muted" id="quoteFlrUsd">—</span>
         </div>
         <div class="quote-row">
           <span class="quote-label">Rate</span>
@@ -542,7 +518,7 @@ body {
         <div class="hiw-step">
           <div class="step-num">3</div>
           <div class="step-title">sFLR lands</div>
-          <div class="step-desc">Staked Flare arrives in your wallet, earning from the first block. Firelight-ready collateral (Phase 2 July 2026).</div>
+          <div class="step-desc">Staked Flare lands in your wallet. sFLR grows in value against FLR as staking rewards accrue — your balance stays the same, each sFLR becomes worth more FLR. Firelight-ready collateral (Phase 2 July 2026).</div>
         </div>
       </div>
       <div class="hiw-note">Contracts hold nothing between transactions — verified live on <a class="flarescan-pill" href="https://flarescan.com/address/0x9f17a5d7CD90181a34A2011e900B440D71E2C011" target="_blank" rel="noopener">FLARESCAN</a>.</div>
@@ -657,7 +633,7 @@ async function init() {
     if (isPaused) {
       els.pausedBanner.classList.add('visible');
       els.swapBtn.disabled = true;
-      els.btnStatus.textContent = 'Pre-launch — swaps open soon';
+      els.btnStatus.textContent = 'Live on Flare mainnet';
     }
   } catch (e) {
     console.error('Failed to check paused state:', e);
@@ -737,6 +713,7 @@ async function quoteRateOnly() {
 }
 
 function setFlrUsdPrice(flrPerUsdt) {
+  return; // disabled: bogus USD price
   if (!flrPerUsdt || flrPerUsdt <= 0) return;
   const usdPerFlr = 1 / flrPerUsdt;
   const text = '1 FLR ≈ $' + usdPerFlr.toPrecision(4);
@@ -754,7 +731,7 @@ function updateRateOnlyDisplay() {
   if (!currentQuote) return;
   els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(2)} FLR`;
   els.quoteRate.classList.remove('muted');
-  setFlrUsdPrice(currentQuote.rate);
+  // USD price removed — was bogus (inverse of swap rate, not a real feed)
   if (currentQuote.sflrRateText) {
     els.sflrRate.textContent = currentQuote.sflrRateText;
     els.sflrRate.classList.remove('hidden');
@@ -861,7 +838,7 @@ function updateQuoteDisplay() {
 
   els.quoteRate.textContent = `1 USDT ≈ ${currentQuote.rate.toFixed(2)} FLR`;
   els.quoteRate.classList.remove('muted');
-  setFlrUsdPrice(currentQuote.rate);
+  // USD price removed — was bogus (inverse of swap rate, not a real feed)
 
   els.quoteFee.textContent = `${parseFloat(feeFormatted).toFixed(4)} USDT`;
   els.quoteFee.classList.remove('muted');
@@ -892,8 +869,7 @@ function clearQuoteDisplay() {
   els.quoteOut.classList.remove('primary');
   els.quoteRate.textContent = '—';
   els.quoteRate.classList.add('muted');
-  els.quoteFlrUsd.textContent = '—';
-  els.quoteFlrUsd.classList.add('muted');
+  if (els.quoteFlrUsd) { els.quoteFlrUsd.textContent = '—'; els.quoteFlrUsd.classList.add('muted'); }
   els.quoteFee.textContent = '—';
   els.quoteFee.classList.add('muted');
   els.quoteNet.textContent = '—';
