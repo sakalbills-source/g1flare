@@ -985,15 +985,26 @@ async function connectWithProvider(eip1193) {
   }
   selectedProvider = eip1193;
   try {
-    const browserProvider = new ethers.BrowserProvider(selectedProvider);
+    let browserProvider = new ethers.BrowserProvider(selectedProvider);
     await browserProvider.send('eth_requestAccounts', []);
-    signer = await browserProvider.getSigner();
-    userAddress = await signer.getAddress();
 
-    const network = await browserProvider.getNetwork();
+    // Check chain and switch BEFORE acquiring signer/contracts
+    let network = await browserProvider.getNetwork();
     if (network.chainId !== BigInt(CHAIN_ID)) {
       await switchChain();
+      // Re-create provider on the NEW chain — the old one is stale after switch
+      browserProvider = new ethers.BrowserProvider(selectedProvider);
+      network = await browserProvider.getNetwork();
+      // Confirm the switch actually landed
+      if (network.chainId !== BigInt(CHAIN_ID)) {
+        showResult('Please switch to the Flare network to continue', 'error');
+        return;
+      }
     }
+
+    // Now acquire signer on the correct chain
+    signer = await browserProvider.getSigner();
+    userAddress = await signer.getAddress();
 
     updateWalletUI();
 
