@@ -38,8 +38,8 @@
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background:
-    radial-gradient(1100px 750px at 15% 20%, rgba(224,168,25,0.20) 0%, transparent 60%),
-    radial-gradient(1000px 700px at 85% 80%, rgba(224,168,25,0.14) 0%, transparent 60%),
+    radial-gradient(1px 1px at 0 0, transparent, transparent),
+    radial-gradient(1px 1px at 0 0, transparent, transparent),
     #0a0a0c;
   background-attachment: fixed;
   color: var(--gray-800);
@@ -158,18 +158,18 @@ body {
   transform: translateX(-50%);
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, rgba(224,168,25,0.35) 0%, rgba(224,168,25,0.1) 40%, transparent 70%);
+  background: transparent;
   pointer-events: none;
 }
 .hero-band::after {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(224,168,25,0.3) 50%, transparent 100%);
+  background: transparent;
 }
 .hero-band-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
 .hero-wordmark { font-size: 64px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; }
-.hero-logo-img { max-width: 320px; width: 70%; height: auto; display: block; margin: 0 auto; }
+.hero-logo-img { max-width: 300px; width: 65%; height: auto; display: block; margin: 0 auto; mix-blend-mode: screen; }
 .hero-wordmark .g1 { color: var(--white); }
 .hero-wordmark .flare { color: var(--primary); }
 .hero-headline { font-size: 24px; font-weight: 600; color: var(--white); line-height: 1.4; margin-bottom: 12px; letter-spacing: -0.3px; }
@@ -187,7 +187,7 @@ body {
 .route-item .route-pill.live { background: var(--primary); color: white; }
 .route-item .route-pill.soon { background: var(--gray-100); color: var(--gray-500); }
 .fl-ribbon {
-  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-lighter) 100%);
+  background: #000000;
   border-bottom: 1px solid rgba(224,168,25,0.3);
   padding: 16px 24px;
   text-align: center;
