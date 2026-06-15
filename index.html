@@ -398,7 +398,7 @@ body {
     <div class="hero-trust">
       <span>Non-custodial · Atomic — settles fully or reverts fully</span>
       <span class="trust-sep">·</span>
-      <span>0.05% flat fee</span>
+      <span>0.1% flat fee</span>
       <span class="trust-sep">·</span>
       <span>Mints via Sceptre, swaps via SparkDEX</span>
     </div>
@@ -514,7 +514,7 @@ body {
           <span class="quote-value muted" id="quoteRate">—</span>
         </div>
         <div class="quote-row">
-          <span class="quote-label">Fee (0.05%)</span>
+          <span class="quote-label">Fee (0.1%)</span>
           <span class="quote-value muted" id="quoteFee">—</span>
         </div>
         <div class="quote-row">
@@ -584,7 +584,7 @@ body {
 
 <script>
 const ADDRESSES = {
-  Module1: '0x9f17a5d7CD90181a34A2011e900B440D71E2C011',
+  Module1: '0xfF25eb914394BA18D4401d75566c626Ca35a707D',
   Module2: '0x67f8821262Af73F0E6c3031Ff7180a34993D524C',
   USDT0: '0xe7cd86e13AC4309349F30B3435a9d337750fC82D',
   WFLR: '0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d',
@@ -596,7 +596,7 @@ const ADDRESSES = {
 const CHAIN_ID = 14;
 const CHAIN_HEX = '0xe';
 const MIN_AMOUNT = 50;
-const FEE_BPS = 5n;
+const FEE_BPS = 10n;
 const AUTO_REFRESH_MS = 15000;
 const DEBOUNCE_MS = 500;
 
@@ -1311,7 +1311,7 @@ init().catch(console.error);
     </div>
     <div class="faq-item">
       <div class="faq-q">What's the fee?</div>
-      <div class="faq-a">0.05% flat, taken in USDT before the swap. No hidden spread.</div>
+      <div class="faq-a">0.1% flat, taken in USDT before the swap. No hidden spread.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Can I get plain FLR instead?</div>
